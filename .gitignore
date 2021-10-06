@@ -3,3 +3,15 @@
 *.suo
 *.db-wal
 *.db
+*.obj
+*.lastbuildstate
+*.exe
+*.cso
+*.ipch
+*.pdb
+*.idb
+*.tlog
+*.ilk
+*.recipe
+*.log
+*.txt

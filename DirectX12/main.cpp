@@ -54,7 +54,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		wrc.right - wrc.left,						//ウインドウ横幅
 		wrc.bottom - wrc.top,						//ウインドウ縦幅
 		nullptr,									//親ウインドウハンドル
-		nullptr,									//メニューハンドル
+		nullptr,									//メニュ
 
 		w.hInstance,								//呼び出しアプリケーションハンドル
 		nullptr);									//オプション
