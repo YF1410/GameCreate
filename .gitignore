@@ -3,7 +3,6 @@
 *.db-shm
 *.suo
 *.vcxproj
-*.sln
 *.db-wal
 *.db
 *.filters
