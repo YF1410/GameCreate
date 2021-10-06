@@ -1,8 +1,5 @@
-*.user
 *.opendb
 *.db-shm
 *.suo
-*.vcxproj
 *.db-wal
 *.db
-*.filters
