@@ -13,7 +13,7 @@ private:
 
 public: //メンバ関数
 	//初期化
-	bool Initialize(HINSTANCE hInstance, HWND hwnd);
+	bool Init(HINSTANCE hInstance, HWND hwnd);
 	//更新
 	void Update();
 	// キーの押下をチェック
