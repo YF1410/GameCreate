@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30717.126
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "prog01", "prog01\prog01.vcxproj", "{B6FAD7D1-71EB-4EAE-97C1-D98C2B735B45}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DirectXTex", "DirectXTex\DirectXTex_Desktop_2019_Win10.vcxproj", "{371B9FA9-4C90-4AC6-A123-ACED756D6C77}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Profile|x64 = Profile|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B6FAD7D1-71EB-4EAE-97C1-D98C2B735B45}.Debug|x64.ActiveCfg = Debug|x64
+		{B6FAD7D1-71EB-4EAE-97C1-D98C2B735B45}.Debug|x64.Build.0 = Debug|x64
+		{B6FAD7D1-71EB-4EAE-97C1-D98C2B735B45}.Profile|x64.ActiveCfg = Debug|x64
+		{B6FAD7D1-71EB-4EAE-97C1-D98C2B735B45}.Profile|x64.Build.0 = Debug|x64
+		{B6FAD7D1-71EB-4EAE-97C1-D98C2B735B45}.Release|x64.ActiveCfg = Release|x64
+		{B6FAD7D1-71EB-4EAE-97C1-D98C2B735B45}.Release|x64.Build.0 = Release|x64
+		{371B9FA9-4C90-4AC6-A123-ACED756D6C77}.Debug|x64.ActiveCfg = Debug|x64
+		{371B9FA9-4C90-4AC6-A123-ACED756D6C77}.Debug|x64.Build.0 = Debug|x64
+		{371B9FA9-4C90-4AC6-A123-ACED756D6C77}.Profile|x64.ActiveCfg = Profile|x64
+		{371B9FA9-4C90-4AC6-A123-ACED756D6C77}.Profile|x64.Build.0 = Profile|x64
+		{371B9FA9-4C90-4AC6-A123-ACED756D6C77}.Release|x64.ActiveCfg = Release|x64
+		{371B9FA9-4C90-4AC6-A123-ACED756D6C77}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F68E58D7-54F0-4182-990D-9D81882758B2}
+	EndGlobalSection
+EndGlobal
