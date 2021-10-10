@@ -143,11 +143,26 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Audio.cpp" />
+    <ClCompile Include="DebugText.cpp" />
+    <ClCompile Include="DirectXCommon.cpp" />
+    <ClCompile Include="GameScene.cpp" />
+    <ClCompile Include="Input.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MyClass.cpp" />
+    <ClCompile Include="Object3d.cpp" />
+    <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="WinApp.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MyClass.h" />
+    <ClInclude Include="Audio.h" />
+    <ClInclude Include="DebugText.h" />
+    <ClInclude Include="DirectXCommon.h" />
+    <ClInclude Include="GameScene.h" />
+    <ClInclude Include="Input.h" />
+    <ClInclude Include="Object3d.h" />
+    <ClInclude Include="SafeDelete.h" />
+    <ClInclude Include="Sprite.h" />
+    <ClInclude Include="WinApp.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DirectXTex\DirectXTex_Desktop_2019_Win10.vcxproj">

@@ -9,19 +9,42 @@ bool Input::Initialize(HINSTANCE hInstance, HWND hwnd)
 	HRESULT result = S_FALSE;
 
 	//初期化（一度だけ行う処理）
-	result = DirectInput8Create(
+	result = DirectInput8Create
+	(
 		hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&dinput, nullptr
 	);
+	if (FAILED(result))
+	{
+		assert(0);
+		return result;
+	}
 
 	//キーボードデバイスの生成
 	result = dinput->CreateDevice(GUID_SysKeyboard, &devkeyboard, NULL);
+	if (FAILED(result))
+	{
+		assert(0);
+		return result;
+	}
 
 	//入力データ形式のセット
 	result = devkeyboard->SetDataFormat(&c_dfDIKeyboard);
+	if (FAILED(result))
+	{
+		assert(0);
+		return result;
+	}
 
 	//排他制御レベルのセット
-	result = devkeyboard->SetCooperativeLevel(
-		hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
+	result = devkeyboard->SetCooperativeLevel
+	(
+		hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY
+	);
+	if (FAILED(result))
+	{
+		assert(0);
+		return result;
+	}
 
 	return true;
 }
@@ -44,7 +67,8 @@ bool Input::PushKey(BYTE keyNumber)
 	assert(0 <= keyNumber && keyNumber <= 256);
 
 	// 0でなければ押している
-	if (key[keyNumber]) {
+	if (key[keyNumber])
+	{
 		return true;
 	}
 
@@ -58,7 +82,8 @@ bool Input::TriggerKey(BYTE keyNumber)
 	assert(0 <= keyNumber && keyNumber <= 256);
 
 	// 前回が0で、今回が0でなければトリガー
-	if (!keyPre[keyNumber] && key[keyNumber]) {
+	if (!keyPre[keyNumber] && key[keyNumber])
+	{
 		return true;
 	}
 
