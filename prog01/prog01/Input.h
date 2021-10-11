@@ -1,4 +1,5 @@
 #pragma once
+
 #include <Windows.h>
 #include <wrl.h>
 
@@ -27,4 +28,3 @@ private: //ƒƒ“ƒo•Ï”
 	BYTE key[256] = {};
 	BYTE keyPre[256] = {};
 };
-
