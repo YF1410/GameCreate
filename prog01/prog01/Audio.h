@@ -38,7 +38,7 @@ public: // サブクラス
 	struct Chunk
 	{
 		char id[4]; // チャンク毎のID
-		int	size;  // チャンクサイズ
+		int	size; // チャンクサイズ
 	};
 
 	// RIFFヘッダチャンク
@@ -52,7 +52,7 @@ public: // サブクラス
 	struct FormatChunk
 	{
 		Chunk chunk; // "fmt "
-		WAVEFORMAT fmt;   // 波形フォーマット
+		WAVEFORMAT fmt; // 波形フォーマット
 	};
 
 public: // メンバ関数

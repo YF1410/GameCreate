@@ -157,7 +157,7 @@ bool Object3d::InitializeDescriptorHeap()
 {
 	HRESULT result = S_FALSE;
 
-	// デスクリプタヒープを生成	
+	// デスクリプタヒープを生成
 	D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc = {};
 	descHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;//シェーダから見えるように
@@ -187,9 +187,9 @@ void Object3d::InitializeCamera(int window_width, int window_height)
 
 	// 平行投影による射影行列の生成
 	//constMap->mat = XMMatrixOrthographicOffCenterLH(
-	//	0, window_width,
-	//	window_height, 0,
-	//	0, 1);
+	//0, window_width,
+	//window_height, 0,
+	//0, 1);
 	// 透視投影による射影行列の生成
 	matProjection = XMMatrixPerspectiveFovLH
 	(
@@ -473,9 +473,9 @@ void Object3d::CreateModel()
 	//.odjファイルを開く
 	//file.open("Resources/triangle/triangle_tex.obj");
 
-	const string moselnamme = "triangle_mat";
-	const string filename = moselnamme + ".obj";
-	const string directoryPath = "Resources/" + moselnamme + "/";
+	const string modelname = "triangle_mat";
+	const string filename = modelname + ".obj";
+	const string directoryPath = "Resources/" + modelname + "/";
 	file.open(directoryPath + filename);
 	//ファイルオープン失敗をチェック
 	if (file.fail())

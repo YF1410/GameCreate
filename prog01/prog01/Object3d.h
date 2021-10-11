@@ -144,7 +144,7 @@ private: // 静的メンバ変数
 	//static unsigned short indices[planeCount * 3];
 	static std::vector<unsigned short> indices;
 	//static unsigned short indices[indexCount];
-	//マテリアル
+	// マテリアル
 	static Material material;
 
 private:// 静的メンバ関数
