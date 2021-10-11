@@ -103,7 +103,7 @@ void DirectXCommon::PostDraw()
 	}
 
 	commandAllocator->Reset(); // キューをクリア
-	commandList->Reset(commandAllocator.Get(), nullptr);	// 再びコマンドリストを貯める準備
+	commandList->Reset(commandAllocator.Get(), nullptr); // 再びコマンドリストを貯める準備
 
 	// バッファをフリップ
 	swapchain->Present(1, 0);
@@ -135,7 +135,7 @@ bool DirectXCommon::InitializeDXGIDevice()
 
 #ifdef _DEBUG
 	ComPtr<ID3D12Debug> debugController;
-	//デバッグレイヤーをオンに	
+	//デバッグレイヤーをオンに
 	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController))))
 	{
 		debugController->EnableDebugLayer();
@@ -167,13 +167,13 @@ bool DirectXCommon::InitializeDXGIDevice()
 		dxgiFactory->EnumAdapters1(i, &tmpAdapter) != DXGI_ERROR_NOT_FOUND;
 		i++)
 	{
-		adapters.push_back(tmpAdapter);	// 動的配列に追加する
+		adapters.push_back(tmpAdapter); // 動的配列に追加する
 	}
 
 	for (int i = 0; i < adapters.size(); i++)
 	{
 		DXGI_ADAPTER_DESC1 adesc;
-		adapters[i]->GetDesc1(&adesc);	// アダプターの情報を取得
+		adapters[i]->GetDesc1(&adesc); // アダプターの情報を取得
 
 		// ソフトウェアデバイスを回避
 		if (adesc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE)
@@ -181,12 +181,12 @@ bool DirectXCommon::InitializeDXGIDevice()
 			continue;
 		}
 
-		std::wstring strDesc = adesc.Description;	// アダプター名
+		std::wstring strDesc = adesc.Description; // アダプター名
 
 		// Intel UHD Graphics（オンボードグラフィック）を回避
 		if (strDesc.find(L"Intel") == std::wstring::npos)
 		{
-			tmpAdapter = adapters[i];	// 採用
+			tmpAdapter = adapters[i]; // 採用
 			break;
 		}
 	}
@@ -222,10 +222,10 @@ bool DirectXCommon::CreateSwapChain()
 	DXGI_SWAP_CHAIN_DESC1 swapchainDesc{};
 	swapchainDesc.Width = WinApp::window_width;
 	swapchainDesc.Height = WinApp::window_height;
-	swapchainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;	// 色情報の書式を一般的なものに
+	swapchainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // 色情報の書式を一般的なものに
 	swapchainDesc.SampleDesc.Count = 1; // マルチサンプルしない
-	swapchainDesc.BufferUsage = DXGI_USAGE_BACK_BUFFER;	// バックバッファとして使えるように
-	swapchainDesc.BufferCount = 2;	// バッファ数を２つに設定
+	swapchainDesc.BufferUsage = DXGI_USAGE_BACK_BUFFER; // バックバッファとして使えるように
+	swapchainDesc.BufferCount = 2; // バッファ数を２つに設定
 	swapchainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD; // フリップ後は速やかに破棄
 	swapchainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH; // フルスクリーン切り替えを許可
 	//IDXGISwapChain1のComPtrを用意
@@ -297,7 +297,7 @@ bool DirectXCommon::CreateFinalRenderTargets()
 
 	// 各種設定をしてディスクリプタヒープを生成
 	D3D12_DESCRIPTOR_HEAP_DESC heapDesc{};
-	heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;	// レンダーターゲットビュー
+	heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV; // レンダーターゲットビュー
 	heapDesc.NumDescriptors = swcDesc.BufferCount;
 	result = device->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&rtvHeaps));
 	if (FAILED(result))

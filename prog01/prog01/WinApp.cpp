@@ -33,16 +33,16 @@ void WinApp::CreateGameWindow()
 	hwnd = CreateWindow
 	(
 		wndClass.lpszClassName, // クラス名
-		windowClassName,			// タイトルバーの文字
-		WS_OVERLAPPEDWINDOW,	// タイトルバーと境界線があるウィンドウ
-		CW_USEDEFAULT,			// 表示X座標（OSに任せる）
-		CW_USEDEFAULT,			// 表示Y座標（OSに任せる）
-		wrc.right - wrc.left,	// ウィンドウ横幅
-		wrc.bottom - wrc.top,	// ウィンドウ縦幅
-		nullptr,				// 親ウィンドウハンドル
-		nullptr,				// メニューハンドル
-		wndClass.hInstance,			// 呼び出しアプリケーションハンドル
-		nullptr				// オプション
+		windowClassName, // タイトルバーの文字
+		WS_OVERLAPPEDWINDOW, // タイトルバーと境界線があるウィンドウ
+		CW_USEDEFAULT, // 表示X座標（OSに任せる）
+		CW_USEDEFAULT, // 表示Y座標（OSに任せる）
+		wrc.right - wrc.left, // ウィンドウ横幅
+		wrc.bottom - wrc.top, // ウィンドウ縦幅
+		nullptr, // 親ウィンドウハンドル
+		nullptr, // メニューハンドル
+		wndClass.hInstance, // 呼び出しアプリケーションハンドル
+		nullptr // オプション
 	);
 
 	// ウィンドウ表示
@@ -57,7 +57,7 @@ void WinApp::TerminateGameWindow()
 
 bool WinApp::ProcessMessage()
 {
-	MSG msg{};	// メッセージ
+	MSG msg{}; // メッセージ
 
 	if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) // メッセージがある？
 	{
