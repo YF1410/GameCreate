@@ -1,6 +1,8 @@
-﻿#include "WinApp.h"
-#include "DirectXCommon.h"
-#include "Input.h"
+﻿#include <Windows.h>
+#include <d3d12.h>
+#include <dxgi1_6.h>
+#pragma comment(lib, "d3d12.lib")
+#pragma comment(lib, "dxgi.lib")
 
 #include <vector>
 #include <string>
@@ -12,13 +14,16 @@
 #include <dinput.h>
 
 #pragma comment(lib, "dinput8.lib")
+#pragma comment(lib, "dxguid.lib")
 
 #include <DirectXTex.h>
 #define _RPT0(rptno, msg)      _RPTN(rptno, "%s", msg)
+#include <wrl.h>
 
 using namespace DirectX;
 using namespace Microsoft::WRL;
 
+#include <d3dx12.h>
 #include <time.h>
 
 #include <xaudio2.h>
@@ -216,42 +221,271 @@ SoundData SoundLoadWave(const char* filename);
 void SoundUnload(SoundData* soundData);
 void SoundPlayWave(IXAudio2* xAudio2, const SoundData& soundData);
 
+LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
+	// メッセージで分岐
+	switch (msg) {
+	case WM_DESTROY: // ウィンドウが破棄された
+		PostQuitMessage(0); // OSに対して、アプリの終了を伝える
+		return 0;
+	}
+	return DefWindowProc(hwnd, msg, wparam, lparam); // 標準の処理を行う
+}
+
 //# Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
-	HRESULT result;
-	ComPtr<ID3D12Device> dev;
-	ComPtr<ID3D12GraphicsCommandList> cmdList;
-
-
 #pragma region WindowsAPI初期化
-	WinApp* win = nullptr;
-	win = new WinApp();
-	win->CreateGameWindow();
+	// ウィンドウサイズ
+	const int window_width = 1280;  // 横幅
+	const int window_height = 720;  // 縦幅
+
+	WNDCLASSEX w{}; // ウィンドウクラスの設定
+	w.cbSize = sizeof(WNDCLASSEX);
+	w.lpfnWndProc = (WNDPROC)WindowProc; // ウィンドウプロシージャを設定
+	w.lpszClassName = L"DirectXGame"; // ウィンドウクラス名
+	w.hInstance = GetModuleHandle(nullptr); // ウィンドウハンドル
+	w.hCursor = LoadCursor(NULL, IDC_ARROW); // カーソル指定
+
+	// ウィンドウクラスをOSに登録
+	RegisterClassEx(&w);
+	// ウィンドウサイズ{ X座標 Y座標 横幅 縦幅 }
+	RECT wrc = { 0, 0, window_width, window_height };
+	AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false); // 自動でサイズ補正
+
+	// ウィンドウオブジェクトの生成
+	HWND hwnd = CreateWindow(w.lpszClassName, // クラス名
+		L"DirectXGame",         // タイトルバーの文字
+		WS_OVERLAPPEDWINDOW,        // 標準的なウィンドウスタイル
+		CW_USEDEFAULT,              // 表示X座標（OSに任せる）
+		CW_USEDEFAULT,              // 表示Y座標（OSに任せる）
+		wrc.right - wrc.left,       // ウィンドウ横幅
+		wrc.bottom - wrc.top,   // ウィンドウ縦幅
+		nullptr,                // 親ウィンドウハンドル
+		nullptr,                // メニューハンドル
+
+		w.hInstance,            // 呼び出しアプリケーションハンドル
+		nullptr);               // オプション
+
+	// ウィンドウ表示
+	ShowWindow(hwnd, SW_SHOW);
+
+	MSG msg{};  // メッセージ
 #pragma endregion WindowsAPI初期化
 
 #pragma region DirectX初期化処理
-	DirectXCommon* dxCommon = nullptr;
-	dxCommon = new DirectXCommon();
-	dxCommon->Init(win);
+#ifdef _DEBUG
+//デバッグレイヤーをオンに
+	ComPtr<ID3D12Debug> debugController;
+	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController))))
+	{
+		debugController->EnableDebugLayer();
+	}
+#endif
 
-	Input* input = nullptr;
-	input = new Input();
-	input->Init(win->GetInstance(), win->GetHwnd());
+	HRESULT result;
+	ComPtr<ID3D12Device> dev;
+	ComPtr<IDXGIFactory6> dxgiFactory;
+	ComPtr<IDXGISwapChain4> swapchain;
+	ComPtr<ID3D12CommandAllocator> cmdAllocator;
+	ComPtr<ID3D12GraphicsCommandList> cmdList;
+	ComPtr<ID3D12CommandQueue> cmdQueue;
+	ComPtr<ID3D12DescriptorHeap> rtvHeaps;
 
 	//スプライト
 	SpriteCommon spriteCommon;
 	const int SPRITES_NUM = 1;
 	Sprite sprites[SPRITES_NUM];
 
-	dxCommon->InitDXGIDevice();
-	dxCommon->InitCommand();
-	//dxCommon->CreateSwapChain();
-	dxCommon->CreateFinalRenderTargets();
-	dxCommon->ClearDepthBuffer();
-	dxCommon->CreateFence();
+	// DXGIファクトリーの生成
+	result = CreateDXGIFactory1(IID_PPV_ARGS(&dxgiFactory));
+	// アダプターの列挙用
+	std::vector<ComPtr<IDXGIAdapter1>> adapters;
+	// ここに特定の名前を持つアダプターオブジェクトが入る
+	ComPtr<IDXGIAdapter1> tmpAdapter;
+	for (int i = 0;
+		dxgiFactory->EnumAdapters1(i, &tmpAdapter) != DXGI_ERROR_NOT_FOUND;
+		i++)
+	{
+		adapters.push_back(tmpAdapter); // 動的配列に追加する
+	}
+
+	for (int i = 0; i < adapters.size(); i++)
+	{
+		DXGI_ADAPTER_DESC1 adesc;
+		adapters[i]->GetDesc1(&adesc);  // アダプターの情報を取得
+
+		// ソフトウェアデバイスを回避
+		if (adesc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE) {
+			continue;
+		}
+
+		std::wstring strDesc = adesc.Description;   // アダプター名
+		// Intel UHD Graphics（オンボードグラフィック）を回避
+		if (strDesc.find(L"Intel") == std::wstring::npos)
+		{
+			tmpAdapter = adapters[i];   // 採用
+			break;
+		}
+	}
+
+	// 対応レベルの配列
+	D3D_FEATURE_LEVEL levels[] =
+	{
+		D3D_FEATURE_LEVEL_12_1,
+		D3D_FEATURE_LEVEL_12_0,
+		D3D_FEATURE_LEVEL_11_1,
+		D3D_FEATURE_LEVEL_11_0,
+	};
+
+	D3D_FEATURE_LEVEL featureLevel;
+
+	for (int i = 0; i < _countof(levels); i++)
+	{
+		// 採用したアダプターでデバイスを生成
+		result = D3D12CreateDevice(tmpAdapter.Get(), levels[i], IID_PPV_ARGS(&dev));
+		if (result == S_OK)
+		{
+			// デバイスを生成できた時点でループを抜ける
+			featureLevel = levels[i];
+			break;
+		}
+	}
+
+	// コマンドアロケータを生成
+	result = dev->CreateCommandAllocator(
+		D3D12_COMMAND_LIST_TYPE_DIRECT,
+		IID_PPV_ARGS(&cmdAllocator));
+
+	// コマンドリストを生成
+	result = dev->CreateCommandList(0,
+		D3D12_COMMAND_LIST_TYPE_DIRECT,
+		cmdAllocator.Get(), nullptr,
+		IID_PPV_ARGS(&cmdList));
+
+	// 標準設定でコマンドキューを生成
+	D3D12_COMMAND_QUEUE_DESC cmdQueueDesc{};
+
+	dev->CreateCommandQueue(&cmdQueueDesc, IID_PPV_ARGS(&cmdQueue));
+
+	// 各種設定をしてスワップチェーンを生成
+	DXGI_SWAP_CHAIN_DESC1 swapchainDesc{};
+	swapchainDesc.Width = 1280;
+	swapchainDesc.Height = 720;
+	swapchainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;  // 色情報の書式
+	swapchainDesc.SampleDesc.Count = 1; // マルチサンプルしない
+	swapchainDesc.BufferUsage = DXGI_USAGE_BACK_BUFFER; // バックバッファ用
+	swapchainDesc.BufferCount = 2;  // バッファ数を２つに設定
+	swapchainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD; // フリップ後は破棄
+	swapchainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+
+	//IDXGISwapChain1のComPtrを用意
+	ComPtr<IDXGISwapChain1> swapchain1;
+	//スワップチェーンを生成
+	dxgiFactory->CreateSwapChainForHwnd(
+		cmdQueue.Get(),
+		hwnd,
+		&swapchainDesc,
+		nullptr,
+		nullptr,
+		&swapchain1);
+
+	//
+	swapchain1.As(&swapchain);
 
 #pragma デスクリプタヒープ
+	// 各種設定をしてデスクリプタヒープを生成
+	D3D12_DESCRIPTOR_HEAP_DESC heapDesc{};
+	heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV; // レンダーターゲットビュー
+	heapDesc.NumDescriptors = 2;    // 裏表の２つ
+	dev->CreateDescriptorHeap(&heapDesc,
+		IID_PPV_ARGS(&rtvHeaps));
+	// 裏表の２つ分について
+	std::vector<ComPtr<ID3D12Resource>> backBuffers(2);
+	for (int i = 0; i < 2; i++)
+	{
+		// スワップチェーンからバッファを取得
+		result = swapchain->GetBuffer(i, IID_PPV_ARGS(&backBuffers[i]));
+		// デスクリプタヒープのハンドルを取得
+		D3D12_CPU_DESCRIPTOR_HANDLE handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(rtvHeaps->GetCPUDescriptorHandleForHeapStart(),  //ヒープの先頭アドレス
+			i,  //ディスクリプタの番号
+			dev->GetDescriptorHandleIncrementSize(heapDesc.Type));  //ディスクリプタ1つ分のサイズ
+		// 裏か表かでアドレスがずれる
+		//handle.ptr += i * dev->GetDescriptorHandleIncrementSize(heapDesc.Type);
+		// レンダーターゲットビューの生成
+		dev->CreateRenderTargetView(
+			backBuffers[i].Get(),
+			nullptr,
+			CD3DX12_CPU_DESCRIPTOR_HANDLE(
+				rtvHeaps->GetCPUDescriptorHandleForHeapStart(),
+				i,
+				dev->GetDescriptorHandleIncrementSize(heapDesc.Type)
+			)
+		);
+	}
+
+	// リソース生成
+	ComPtr<ID3D12Resource> depthBuffer;
+
+	//深度バッファリソース設定
+	CD3DX12_RESOURCE_DESC depthResDesc = CD3DX12_RESOURCE_DESC::Tex2D(
+		DXGI_FORMAT_D32_FLOAT,
+		window_width,
+		window_height,
+		1, 0,
+		1, 0,
+		D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL
+	);
+	//深度バッファの生成
+	result = dev->CreateCommittedResource
+	(
+		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+		D3D12_HEAP_FLAG_NONE,
+		&depthResDesc,
+		D3D12_RESOURCE_STATE_DEPTH_WRITE,  //深度値書き込みに使用
+		&CD3DX12_CLEAR_VALUE(DXGI_FORMAT_D32_FLOAT, 1.0f, 0),
+		IID_PPV_ARGS(&depthBuffer)
+	);
+
+	//深度ビュー用デスクリプタヒープ作成
+	D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc{};
+	dsvHeapDesc.NumDescriptors = 1;  //深度ビューは1つ
+	dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;  //デプスステンシルビュー
+	ComPtr<ID3D12DescriptorHeap> dsvHeap;
+	result = dev->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&dsvHeap));
+
+	//深度ビュー作成
+	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
+	dsvDesc.Format = DXGI_FORMAT_D32_FLOAT;  //深度値フォーマット
+	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+	dev->CreateDepthStencilView
+	(
+		depthBuffer.Get(),
+		&dsvDesc,
+		dsvHeap->GetCPUDescriptorHandleForHeapStart()
+	);
+
+	// フェンスの生成
+	ComPtr<ID3D12Fence> fence;
+	UINT64 fenceVal = 0;
+
+	result = dev->CreateFence(fenceVal, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
+
+	//初期化（一度だけ行う処理）
+	IDirectInput8* dinput = nullptr;
+	result = DirectInput8Create(
+		w.hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&dinput, nullptr
+	);
+
+	//キーボードデバイスの生成
+	IDirectInputDevice8* devkeyboard = nullptr;
+	result = dinput->CreateDevice(GUID_SysKeyboard, &devkeyboard, NULL);
+
+	//入力データ形式のセット
+	result = devkeyboard->SetDataFormat(&c_dfDIKeyboard);
+
+	//排他制御レベルのセット
+	result = devkeyboard->SetCooperativeLevel(
+		hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
 
 	//サウンド
 	ComPtr<IXAudio2> xAudio2;
@@ -557,7 +791,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	XMMATRIX matProjection = XMMatrixPerspectiveFovLH
 	(
 		XMConvertToRadians(60.0f),
-		(float)WinApp::WIN_WIDTH / WinApp::WIN_HEIGHT,
+		(float)window_width / window_height,
 		0.1f, 1000.0f
 	);
 
@@ -618,14 +852,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	}
 
 	//スプライト共通データ生成
-	spriteCommon = SpriteCommonCreate(dev.Get(), WinApp::WIN_WIDTH, WinApp::WIN_HEIGHT);
+	spriteCommon = SpriteCommonCreate(dev.Get(), window_width, window_height);
 
 	SpriteCommonLoadTexture(spriteCommon, 0, L"Resources/APEX_01.png", dev.Get());
 
 	for (int i = 0; i < _countof(sprites); i++)
 	{
 		int texNumber = i;
-		sprites[i] = SpriteCreate(dev.Get(), WinApp::WIN_WIDTH, WinApp::WIN_HEIGHT, texNumber, spriteCommon, { 0.5f, 0.5f }, false, false);
+		sprites[i] = SpriteCreate(dev.Get(), window_width, window_height, texNumber, spriteCommon, { 0.5f, 0.5f }, false, false);
 		sprites[i].rotation = 0;
 		sprites[i].position = { (float)100, (float)100, 0 };
 		sprites[i].color = { 1, 0, 0, 1 };
@@ -641,7 +875,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//デバックテキスト用のテクスチャ読み込み
 	SpriteCommonLoadTexture(spriteCommon, debugTextTexNumber, L"Resources/debugfont.png", dev.Get());
 	//デバックテキストの初期化
-	debugText.Initialize(dev.Get(), WinApp::WIN_WIDTH, WinApp::WIN_HEIGHT, debugTextTexNumber, spriteCommon);
+	debugText.Initialize(dev.Get(), window_width, window_height, debugTextTexNumber, spriteCommon);
 
 	//WICテクスチャのロード
 	TexMetadata metadata{};
@@ -721,15 +955,32 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	while (true)  // ゲームループ
 	{
-		win->ProcessMessage();
+		// ブロック内はページ右側を参照
+#pragma region ウィンドウメッセージ処理
+		// メッセージがある？
+		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
+			TranslateMessage(&msg); // キー入力メッセージの処理
+			DispatchMessage(&msg); // プロシージャにメッセージを送る
+		}
+
+		// ✖ボタンで終了メッセージが来たらゲームループを抜ける
+		if (msg.message == WM_QUIT) {
+			break;
+		}
+#pragma endregion ウィンドウメッセージ処理
 
 #pragma region DirectX毎フレーム処理
+
+		//キーボード情報の取得開始
+		result = devkeyboard->Acquire();
+		//全キーの入力状態を取得する
+		BYTE key[256] = {};
+		result = devkeyboard->GetDeviceState(sizeof(key), key);
+
 		// 更新処理　ここから
 
-		input->Update();
-
 		//キーが押されているときの処理
-		if (input->TriggerKey(DIK_0))
+		if (key[DIK_0])
 		{
 			OutputDebugStringA("Hit 0\n");
 		}
@@ -741,6 +992,39 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		debugText.Print(spriteCommon, "Hello,DirectX!!", 200, 100, 1.0f);
 		//X座標、Y座標、縮尺を指定して表示
 		debugText.Print(spriteCommon, "Nihon Kogakuin", 200, 200, 2.0f);
+
+		if (key[DIK_W] || key[DIK_S] || key[DIK_D] || key[DIK_A])
+		{
+			if (key[DIK_W])
+			{
+				player[0].position.y += 1.0f;
+			}
+			else if (key[DIK_S])
+			{
+				player[0].position.y -= 1.0f;
+			}
+
+			if (key[DIK_D])
+			{
+				player[0].position.x += 1.0f;
+			}
+			else if (key[DIK_A])
+			{
+				player[0].position.x -= 1.0f;
+			}
+		}
+
+		if (key[DIK_UP] || key[DIK_DOWN] || key[DIK_RIGHT] || key[DIK_LEFT])
+		{
+			if (key[DIK_RIGHT])
+			{
+				angle -= XMConvertToRadians(50.0f);
+			}
+			else if (key[DIK_LEFT])
+			{
+				angle += XMConvertToRadians(50.0f);
+			}
+		}
 
 		XMVECTOR v0 = { 0, 0, -50, 0 };
 		XMMATRIX rotM = XMMatrixRotationY(XMConvertToRadians(angle));
@@ -777,9 +1061,26 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #pragma endregion DirectX毎フレーム処理
 
 #pragma region グラフィックスコマンド
-		
+		// バックバッファの番号を取得（2つなので0番か1番）
+		UINT bbIndex = swapchain->GetCurrentBackBufferIndex();
 
-		dxCommon->PreDraw();
+		// １．リソースバリアで書き込み可能に変更
+		//表示状態から描画状態に変更
+		cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(backBuffers[bbIndex].Get(),
+			D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
+
+		// ２．描画先指定
+		// レンダーターゲットビュー用ディスクリプタヒープのハンドルを取得
+		D3D12_CPU_DESCRIPTOR_HANDLE rtvH = rtvHeaps->GetCPUDescriptorHandleForHeapStart();
+		rtvH.ptr += bbIndex * dev->GetDescriptorHandleIncrementSize(heapDesc.Type);
+		//深度ステンシルビュー用デスクリプタヒープのハンドルを取得
+		D3D12_CPU_DESCRIPTOR_HANDLE dsvH = dsvHeap->GetCPUDescriptorHandleForHeapStart();
+		cmdList->OMSetRenderTargets(1, &rtvH, false, &dsvH);
+
+		// ３．画面クリア           R     G     B    A
+		float clearColor[] = { r[0], g[0], b[0], a[0] }; // 青っぽい色
+		cmdList->ClearRenderTargetView(rtvH, clearColor, 0, nullptr);
+		cmdList->ClearDepthStencilView(dsvH, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 
 		// ４．描画コマンドここから
@@ -793,6 +1094,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		cmdList->SetGraphicsRootSignature(object3dPipelineSet.rootsignature.Get());
 
 #pragma ビューポート変換
+		//ビューポート領域の設定
+		cmdList->RSSetViewports(1, &CD3DX12_VIEWPORT(0.0f, 0.0f, window_width, window_height));
+		//シザー短形の設定
+		cmdList->RSSetScissorRects(1, &CD3DX12_RECT(0, 0, window_width, window_height));
 
 #pragma 描画プリミティブ
 #pragma トライアングルストリップ
@@ -819,11 +1124,32 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		debugText.DrawAll(cmdList.Get(), spriteCommon, dev.Get());
 
 		// ４．描画コマンドここまで
-		dxCommon->PostDraw();
-		
+
+		// ５．リソースバリアを戻す
+		cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(backBuffers[bbIndex].Get(),
+			D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
+
+		// 命令のクローズ
+		cmdList->Close();
+		// コマンドリストの実行
+		ID3D12CommandList* cmdLists[] = { cmdList.Get() }; // コマンドリストの配列
+		cmdQueue->ExecuteCommandLists(1, cmdLists);
+		// コマンドリストの実行完了を待つ
+		cmdQueue->Signal(fence.Get(), ++fenceVal);
+		if (fence->GetCompletedValue() != fenceVal) {
+			HANDLE event = CreateEvent(nullptr, false, false, nullptr);
+			fence->SetEventOnCompletion(fenceVal, event);
+			WaitForSingleObject(event, INFINITE);
+			CloseHandle(event);
+		}
+
+		cmdAllocator->Reset(); // キューをクリア
+		cmdList->Reset(cmdAllocator.Get(), nullptr);  // 再びコマンドリストを貯める準備
 
 #pragma endregion グラフィックスコマンド
 
+		// バッファをフリップ（裏表の入替え）
+		swapchain->Present(1, 0);
 	}
 
 	// XAudio2解放
@@ -832,7 +1158,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//SoundUnload(&soundData1);
 
 	// ウィンドウクラスを登録解除
-	win->DeleteGameWindow();
+	UnregisterClass(w.lpszClassName, w.hInstance);
 
 	return 0;
 }
