@@ -9,6 +9,9 @@ GameScene::GameScene()
 GameScene::~GameScene()
 {
 	safe_delete(sprite);
+	safe_delete(back1);
+	safe_delete(back2);
+	safe_delete(back3);
 	safe_delete(object3d);
 }
 
@@ -35,10 +38,35 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio)
 		assert(0);
 	}
 
+	if (!Sprite::LoadTexture(2, L"Resources/back/back1.png")) {
+		assert(0);
+	}
+	if (!Sprite::LoadTexture(3, L"Resources/back/back2.png")) {
+		assert(0);
+	}
+	if (!Sprite::LoadTexture(4, L"Resources/back/back3.png")) {
+		assert(0);
+	}
+
 	// 背景スプライト生成
-	sprite = Sprite::Create(1, { 0.0f,0.0f });
-	sprite->SetSize({ 100.0f,100.0f });
-	sprite->SetPosition({ 100.0f,100.0f });
+	/*sprite = Sprite::Create(1, { 0.0f,0.0f });
+	sprite->SetSize({ WinApp::window_width,WinApp::window_height });
+	sprite->SetPosition({ 0.0f,0.0f });*/
+
+	back1 = Sprite::Create(2, { 0.0f,0.0f });
+	back1->SetSize({ 1600,1600 });
+	back1->SetPosition({ 0.0f,0.0f });
+	back1->SetRotation(45.0f);
+
+	back2 = Sprite::Create(3, { 0.0f,0.0f });
+	back2->SetSize({ 1600,1600 });
+	back2->SetPosition({ 0.0f,-1600.0f });
+	back2->SetRotation(45.0f);
+
+	back3 = Sprite::Create(4, { 0.0f,0.0f });
+	back3->SetSize({ 1600,1600 });
+	back3->SetPosition({ 0.0f,-3200.0f });
+	back3->SetRotation(45.0f);
 
 	// 3Dオブジェクト生成
 	object3d = Object3d::Create();
@@ -95,22 +123,32 @@ void GameScene::Update()
 	{
 		if (input->PushKey(DIK_W))
 		{
-			Object3d::CameraMoveEyeVector({ 0.0f,+1.0f,0.0f });
+			//Object3d::CameraMoveEyeVector({ 0.0f,+1.0f,0.0f });
+			scroll += 10.0f;
 		}
 		else if (input->PushKey(DIK_S))
 		{
-			Object3d::CameraMoveEyeVector({ 0.0f,-1.0f,0.0f });
+			//Object3d::CameraMoveEyeVector({ 0.0f,-1.0f,0.0f });
+			scroll -= 10.0f;
 		}
 
 		if (input->PushKey(DIK_D))
 		{
-			Object3d::CameraMoveEyeVector({ +1.0f,0.0f,0.0f });
+			//Object3d::CameraMoveEyeVector({ +1.0f,0.0f,0.0f });
 		}
 		else if (input->PushKey(DIK_A))
 		{
-			Object3d::CameraMoveEyeVector({ -1.0f,0.0f,0.0f });
+			//Object3d::CameraMoveEyeVector({ -1.0f,0.0f,0.0f });
 		}
 	}
+
+	if (scroll >= 1710.0f) {
+		scroll = 0;
+	}
+
+	back1->SetPosition({ 600.0f -scroll,-600.0f +scroll});
+	back2->SetPosition({ 1730.0f - scroll,-1730.0f + scroll });
+	back3->SetPosition({ 2860.0f - scroll,-2860.0f + scroll });
 
 	object3d->Update();
 }
@@ -123,7 +161,10 @@ void GameScene::Draw()
 	// 背景スプライト描画前処理
 	Sprite::PreDraw(dxCommon->GetCommandList());
 	// 背景スプライト描画
-	sprite->Draw();
+	//sprite->Draw();
+	back1->Draw();
+	back2->Draw();
+	back3->Draw();
 	// スプライト描画後処理
 	Sprite::PostDraw();
 	// 深度バッファクリア

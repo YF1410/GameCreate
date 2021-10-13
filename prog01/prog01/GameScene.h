@@ -43,5 +43,9 @@ private: // メンバ変数
 
 	// ゲームシーン用
 	Sprite* sprite = nullptr;
+	Sprite* back1 = nullptr;
+	Sprite* back2 = nullptr;
+	Sprite* back3= nullptr;
 	Object3d* object3d = nullptr;
+	float scroll;
 };
