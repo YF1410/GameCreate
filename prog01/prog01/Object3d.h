@@ -5,6 +5,7 @@
 #include <d3d12.h>
 #include <DirectXMath.h>
 #include <d3dx12.h>
+#include "Model.h"
 
 class Object3d
 {
@@ -174,6 +175,8 @@ public: // メンバ関数
 	const XMFLOAT3& GetPosition() { return position; }
 	// 座標の設定
 	void SetPosition(XMFLOAT3 position) { this->position = position; }
+	// モデルの設定
+	void SetModel(Model* model);
 
 private: // メンバ変数
 	//ComPtr<ID3D12Resource> constBuff; // 定数バッファ
@@ -191,4 +194,6 @@ private: // メンバ変数
 	XMMATRIX matWorld;
 	// 親オブジェクト
 	Object3d* parent = nullptr;
+
+	Model* model = nullptr;
 };

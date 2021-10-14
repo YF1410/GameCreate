@@ -13,11 +13,12 @@ GameScene::~GameScene()
 	safe_delete(back2);
 	safe_delete(back3);
 	safe_delete(object3d);
+	safe_delete(modelFighter);
 }
 
 void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio)
 {
-	// nullptrƒ`ƒFƒbƒN
+	// nullptrãƒã‚§ãƒƒã‚¯
 	assert(dxCommon);
 	assert(input);
 	assert(audio);
@@ -26,14 +27,14 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio)
 	this->input = input;
 	this->audio = audio;
 
-	// ƒfƒoƒbƒOƒeƒLƒXƒg—pƒeƒNƒXƒ`ƒƒ“Ç‚İ‚İ
+	// ãƒ‡ãƒãƒƒã‚°ãƒ†ã‚­ã‚¹ãƒˆç”¨ãƒ†ã‚¯ã‚¹ãƒãƒ£èª­ã¿è¾¼ã¿
 	if (!Sprite::LoadTexture(debugTextTexNumber, L"Resources/debugfont.png")) {
 		assert(0);
 	}
-	// ƒfƒoƒbƒOƒeƒLƒXƒg‰Šú‰»
+	// ãƒ‡ãƒãƒƒã‚°ãƒ†ã‚­ã‚¹ãƒˆåˆæœŸåŒ–
 	debugText.Initialize(debugTextTexNumber);
 
-	// ƒeƒNƒXƒ`ƒƒ“Ç‚İ‚İ
+	// ãƒ†ã‚¯ã‚¹ãƒãƒ£èª­ã¿è¾¼ã¿
 	if (!Sprite::LoadTexture(1, L"Resources/APEX_01.png")) {
 		assert(0);
 	}
@@ -48,7 +49,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio)
 		assert(0);
 	}
 
-	// ”wŒiƒXƒvƒ‰ƒCƒg¶¬
+	// èƒŒæ™¯ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆç”Ÿæˆ
 	/*sprite = Sprite::Create(1, { 0.0f,0.0f });
 	sprite->SetSize({ WinApp::window_width,WinApp::window_height });
 	sprite->SetPosition({ 0.0f,0.0f });*/
@@ -65,34 +66,46 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio)
 	back3->SetSize({ 1600,1600 });
 	back3->SetRotation(45.0f);
 
-	// 3DƒIƒuƒWƒFƒNƒg¶¬
+	//.objã®åå‰ã‚’æŒ‡å®šã—ã¦ãƒ¢ãƒ‡ãƒ«ã‚’èª­ã¿è¾¼ã‚€
+	modelFighter = modelFighter->CreateFromObject("untitled");
+	modelFighter2 = modelFighter2->CreateFromObject("skydome");
+	modelFighter3 = modelFighter3->CreateFromObject("ground");
+	// 3Dã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆç”Ÿæˆ
 	object3d = Object3d::Create();
-	object3d->SetPosition({-30.0f,-15.0f,0.0f});
+	object3d2 = Object3d::Create();
+	object3d3 = Object3d::Create();
+	// 3Dã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã«ãƒ¢ãƒ‡ãƒ«ã‚’å‰²ã‚Šå½“ã¦ã‚‹
+	object3d->SetModel(modelFighter);
+	object3d2->SetModel(modelFighter2);
+	object3d3->SetModel(modelFighter3);
 
-	//ƒTƒEƒ“ƒhÄ¶
+	object3d->SetPosition({ 0.0f, -2.5f, 0.0f });
+	object3d3->SetPosition({0.0f, -2.5f, 0.0f});
+
+	//ã‚µã‚¦ãƒ³ãƒ‰å†ç”Ÿ
 	audio->PlayWave("Resources/Alarm01.wav");
 }
 
 void GameScene::Update()
 {
-	//ƒL[‚ª‰Ÿ‚³‚ê‚Ä‚¢‚é‚Æ‚«‚Ìˆ—
+	//ã‚­ãƒ¼ãŒæŠ¼ã•ã‚Œã¦ã„ã‚‹ã¨ãã®å‡¦ç†
 	if (input->TriggerKey(DIK_0))
 	{
 		OutputDebugStringA("Hit 0\n");
 	}
 
-	//XÀ•WAYÀ•W‚ğw’è‚µ‚Ä•\¦
+	//Xåº§æ¨™ã€Yåº§æ¨™ã‚’æŒ‡å®šã—ã¦è¡¨ç¤º
 	debugText.Print("Hello,DirectX!!", 200, 100, 1.0f);
-	//XÀ•WAYÀ•WAkÚ‚ğw’è‚µ‚Ä•\¦
+	//Xåº§æ¨™ã€Yåº§æ¨™ã€ç¸®å°ºã‚’æŒ‡å®šã—ã¦è¡¨ç¤º
 	debugText.Print("Nihon Kogakuin", 200, 200, 2.0f);
 
-	// ƒIƒuƒWƒFƒNƒgˆÚ“®
+	// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆç§»å‹•
 	if (input->PushKey(DIK_UP) || input->PushKey(DIK_DOWN) || input->PushKey(DIK_RIGHT) || input->PushKey(DIK_LEFT))
 	{
-		// Œ»İ‚ÌÀ•W‚ğæ“¾
+		// ç¾åœ¨ã®åº§æ¨™ã‚’å–å¾—
 		XMFLOAT3 position = object3d->GetPosition();
 
-		// ˆÚ“®Œã‚ÌÀ•W‚ğŒvZ
+		// ç§»å‹•å¾Œã®åº§æ¨™ã‚’è¨ˆç®—
 		if (input->PushKey(DIK_UP))
 		{
 			position.y += 1.0f;
@@ -111,11 +124,11 @@ void GameScene::Update()
 			position.x -= 1.0f;
 		}
 
-		// À•W‚Ì•ÏX‚ğ”½‰f
+		// åº§æ¨™ã®å¤‰æ›´ã‚’åæ˜ 
 		object3d->SetPosition(position);
 	}
 
-	// ƒJƒƒ‰ˆÚ“®
+	// ã‚«ãƒ¡ãƒ©ç§»å‹•
 	if (input->PushKey(DIK_W) || input->PushKey(DIK_S) || input->PushKey(DIK_D) || input->PushKey(DIK_A))
 	{
 		if (input->PushKey(DIK_W))
@@ -148,39 +161,43 @@ void GameScene::Update()
 	back3->SetPosition({ 2860.0f - scroll,-2860.0f + scroll });
 
 	object3d->Update();
+	object3d2->Update();
+	object3d3->Update();
 }
 
 void GameScene::Draw()
 {
-	// ƒRƒ}ƒ“ƒhƒŠƒXƒg‚Ìæ“¾
+	// ã‚³ãƒãƒ³ãƒ‰ãƒªã‚¹ãƒˆã®å–å¾—
 	ID3D12GraphicsCommandList* cmdList = dxCommon->GetCommandList();
-#pragma region ”wŒiƒXƒvƒ‰ƒCƒg•`‰æ
-	// ”wŒiƒXƒvƒ‰ƒCƒg•`‰æ‘Oˆ—
+#pragma region èƒŒæ™¯ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆæç”»
+	// èƒŒæ™¯ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆæç”»å‰å‡¦ç†
 	Sprite::PreDraw(dxCommon->GetCommandList());
-	// ”wŒiƒXƒvƒ‰ƒCƒg•`‰æ
+	// èƒŒæ™¯ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆæç”»
 	//sprite->Draw();
 	back1->Draw();
 	back2->Draw();
 	back3->Draw();
-	// ƒXƒvƒ‰ƒCƒg•`‰æŒãˆ—
+	// ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆæç”»å¾Œå‡¦ç†
 	Sprite::PostDraw();
-	// [“xƒoƒbƒtƒ@ƒNƒŠƒA
+	// æ·±åº¦ãƒãƒƒãƒ•ã‚¡ã‚¯ãƒªã‚¢
 	dxCommon->ClearDepthBuffer();
-#pragma endregion ”wŒiƒXƒvƒ‰ƒCƒg•`‰æ
-#pragma region 3DƒIƒuƒWƒFƒNƒg•`‰æ
-	// 3DƒIƒuƒWƒFƒNƒg•`‰æ‘Oˆ—
+#pragma endregion èƒŒæ™¯ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆæç”»
+#pragma region 3Dã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆæç”»
+	// 3Dã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆæç”»å‰å‡¦ç†
 	Object3d::PreDraw(dxCommon->GetCommandList());
-	// 3DƒIƒuƒNƒWƒFƒNƒg‚Ì•`‰æ
+	// 3Dã‚ªãƒ–ã‚¯ã‚¸ã‚§ã‚¯ãƒˆã®æç”»
 	object3d->Draw();
-	// 3DƒIƒuƒWƒFƒNƒg•`‰æŒãˆ—
+	object3d2->Draw();
+	object3d3->Draw();
+	// 3Dã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆæç”»å¾Œå‡¦ç†
 	Object3d::PostDraw();
-#pragma endregion 3DƒIƒuƒWƒFƒNƒg•`‰æ
-#pragma region ‘OŒiƒXƒvƒ‰ƒCƒg•`‰æ
-	// ‘OŒiƒXƒvƒ‰ƒCƒg•`‰æ‘Oˆ—
+#pragma endregion 3Dã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆæç”»
+#pragma region å‰æ™¯ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆæç”»
+	// å‰æ™¯ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆæç”»å‰å‡¦ç†
 	Sprite::PreDraw(dxCommon->GetCommandList());
-	// ƒfƒoƒbƒOƒeƒLƒXƒg‚Ì•`‰æ
+	// ãƒ‡ãƒãƒƒã‚°ãƒ†ã‚­ã‚¹ãƒˆã®æç”»
 	debugText.DrawAll(dxCommon->GetCommandList());
-	// ƒXƒvƒ‰ƒCƒg•`‰æŒãˆ—
+	// ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆæç”»å¾Œå‡¦ç†
 	Sprite::PostDraw();
-#pragma endregion ‘OŒiƒXƒvƒ‰ƒCƒg•`‰æ
+#pragma endregion å‰æ™¯ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆæç”»
 }
