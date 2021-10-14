@@ -74,10 +74,12 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio)
 	object3d = Object3d::Create();
 	object3d2 = Object3d::Create();
 	object3d3 = Object3d::Create();
+	object3d4 = Object3d::Create();
 	// 3Dオブジェクトにモデルを割り当てる
 	object3d->SetModel(modelFighter);
 	object3d2->SetModel(modelFighter2);
 	object3d3->SetModel(modelFighter3);
+	object3d4->SetModel(modelFighter);
 
 	object3d->SetPosition({ 0.0f, -2.5f, 0.0f });
 	object3d3->SetPosition({0.0f, -2.5f, 0.0f});
@@ -163,6 +165,7 @@ void GameScene::Update()
 	object3d->Update();
 	object3d2->Update();
 	object3d3->Update();
+	object3d4->Update();
 }
 
 void GameScene::Draw()
@@ -189,6 +192,7 @@ void GameScene::Draw()
 	object3d->Draw();
 	object3d2->Draw();
 	object3d3->Draw();
+	object3d4->Draw();
 	// 3Dオブジェクト描画後処理
 	Object3d::PostDraw();
 #pragma endregion 3Dオブジェクト描画

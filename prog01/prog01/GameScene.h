@@ -53,5 +53,6 @@ private: // メンバ変数
 	Object3d* object3d = nullptr;
 	Object3d* object3d2 = nullptr;
 	Object3d* object3d3 = nullptr;
+	Object3d *object3d4 = nullptr;
   float scroll;
 };
