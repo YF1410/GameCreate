@@ -10,6 +10,7 @@ GameScene::~GameScene()
 {
 	safe_delete(sprite);
 	safe_delete(object3d);
+	safe_delete(modelFighter);
 }
 
 void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio)
@@ -40,9 +41,21 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio)
 	sprite->SetSize({ 100.0f,100.0f });
 	sprite->SetPosition({ 100.0f,100.0f });
 
+	//.objの名前を指定してモデルを読み込む
+	modelFighter = modelFighter->CreateFromObject("untitled");
+	modelFighter2 = modelFighter2->CreateFromObject("skydome");
+	modelFighter3 = modelFighter3->CreateFromObject("ground");
 	// 3Dオブジェクト生成
 	object3d = Object3d::Create();
-	object3d->Update();
+	object3d2 = Object3d::Create();
+	object3d3 = Object3d::Create();
+	// 3Dオブジェクトにモデルを割り当てる
+	object3d->SetModel(modelFighter);
+	object3d2->SetModel(modelFighter2);
+	object3d3->SetModel(modelFighter3);
+
+	object3d->SetPosition({ 0.0f, -2.5f, 0.0f });
+	object3d3->SetPosition({0.0f, -2.5f, 0.0f});
 
 	//サウンド再生
 	audio->PlayWave("Resources/Alarm01.wav");
@@ -113,6 +126,8 @@ void GameScene::Update()
 	}
 
 	object3d->Update();
+	object3d2->Update();
+	object3d3->Update();
 }
 
 void GameScene::Draw()
@@ -134,6 +149,8 @@ void GameScene::Draw()
 	Object3d::PreDraw(dxCommon->GetCommandList());
 	// 3Dオブクジェクトの描画
 	object3d->Draw();
+	object3d2->Draw();
+	object3d3->Draw();
 	// 3Dオブジェクト描画後処理
 	Object3d::PostDraw();
 #pragma endregion 3Dオブジェクト描画

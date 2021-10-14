@@ -8,6 +8,7 @@
 #include "Object3d.h"
 #include "DebugText.h"
 #include "Audio.h"
+#include "Model.h"
 
 class GameScene
 {
@@ -43,5 +44,10 @@ private: // メンバ変数
 
 	// ゲームシーン用
 	Sprite* sprite = nullptr;
+	Model* modelFighter = nullptr;
+	Model* modelFighter2 = nullptr;
+	Model* modelFighter3 = nullptr;
 	Object3d* object3d = nullptr;
+	Object3d* object3d2 = nullptr;
+	Object3d* object3d3 = nullptr;
 };
