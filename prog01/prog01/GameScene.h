@@ -10,8 +10,7 @@
 #include "Audio.h"
 #include "Model.h"
 
-class GameScene
-{
+class GameScene {
 private: // エイリアス
 // Microsoft::WRL::を省略
 	template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
@@ -44,14 +43,14 @@ private: // メンバ変数
 
 	// ゲームシーン用
 	Sprite* sprite = nullptr;
-  Sprite* back1 = nullptr;
+	Sprite* back1 = nullptr;
 	Sprite* back2 = nullptr;
-	Sprite* back3= nullptr;
-  Model* modelFighter = nullptr;
-	Model* modelFighter2 = nullptr;
-	Model* modelFighter3 = nullptr;
-	Object3d* object3d = nullptr;
-	Object3d* object3d2 = nullptr;
-	Object3d* object3d3 = nullptr;
-  float scroll;
+	Sprite* back3 = nullptr;
+	Model* playerModel = nullptr;
+	Model* skydomeModel = nullptr;
+	Model* groundModel = nullptr;
+	Object3d* playerObj = nullptr;
+	Object3d* skydomeObj = nullptr;
+	Object3d* groundObj = nullptr;
+	float scroll = 0.0f;
 };

@@ -12,8 +12,9 @@ GameScene::~GameScene()
 	safe_delete(back1);
 	safe_delete(back2);
 	safe_delete(back3);
-	safe_delete(object3d);
-	safe_delete(modelFighter);
+	safe_delete(playerObj);
+	safe_delete(skydomeObj);
+	safe_delete(groundObj);
 }
 
 void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio)
@@ -67,20 +68,24 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio)
 	back3->SetRotation(45.0f);
 
 	//.objの名前を指定してモデルを読み込む
-	modelFighter = modelFighter->CreateFromObject("untitled");
-	modelFighter2 = modelFighter2->CreateFromObject("skydome");
-	modelFighter3 = modelFighter3->CreateFromObject("ground");
+	playerModel = playerModel->CreateFromObject("untitled");
+	skydomeModel = skydomeModel->CreateFromObject("skydome");
+	groundModel = groundModel->CreateFromObject("ground");
 	// 3Dオブジェクト生成
-	object3d = Object3d::Create();
-	object3d2 = Object3d::Create();
-	object3d3 = Object3d::Create();
+	playerObj = Object3d::Create();
+	skydomeObj = Object3d::Create();
+	groundObj = Object3d::Create();
 	// 3Dオブジェクトにモデルを割り当てる
-	object3d->SetModel(modelFighter);
-	object3d2->SetModel(modelFighter2);
-	object3d3->SetModel(modelFighter3);
+	playerObj->SetModel(playerModel);
+	skydomeObj->SetModel(skydomeModel);
+	groundObj->SetModel(groundModel);
 
-	object3d->SetPosition({ 0.0f, -2.5f, 0.0f });
-	object3d3->SetPosition({0.0f, -2.5f, 0.0f});
+	playerObj->SetPosition({ 0.0f, 0.0f, -35.0f });
+	float playerScale = 1.0f;
+	playerObj->SetScale({playerScale,playerScale,playerScale});
+	float groundScale = 10.0f;
+	groundObj->SetScale({ groundScale,groundScale, groundScale });
+	//groundObj->SetPosition({0.0f, -2.5f, 0.0f});
 
 	//サウンド再生
 	audio->PlayWave("Resources/Alarm01.wav");
@@ -103,16 +108,16 @@ void GameScene::Update()
 	if (input->PushKey(DIK_UP) || input->PushKey(DIK_DOWN) || input->PushKey(DIK_RIGHT) || input->PushKey(DIK_LEFT))
 	{
 		// 現在の座標を取得
-		XMFLOAT3 position = object3d->GetPosition();
+		XMFLOAT3 position = playerObj->GetPosition();
 
 		// 移動後の座標を計算
 		if (input->PushKey(DIK_UP))
 		{
-			position.y += 1.0f;
+			position.z += 1.0f;
 		}
 		else if (input->PushKey(DIK_DOWN))
 		{
-			position.y -= 1.0f;
+			position.z -= 1.0f;
 		}
 
 		if (input->PushKey(DIK_RIGHT))
@@ -125,7 +130,7 @@ void GameScene::Update()
 		}
 
 		// 座標の変更を反映
-		object3d->SetPosition(position);
+		playerObj->SetPosition(position);
 	}
 
 	// カメラ移動
@@ -133,36 +138,36 @@ void GameScene::Update()
 	{
 		if (input->PushKey(DIK_W))
 		{
-			//Object3d::CameraMoveEyeVector({ 0.0f,+1.0f,0.0f });
-			scroll += 10.0f;
+			Object3d::CameraMoveVector({ 0.0f,+1.0f,0.0f });
+			//scroll += 10.0f;
 		}
 		else if (input->PushKey(DIK_S))
 		{
-			//Object3d::CameraMoveEyeVector({ 0.0f,-1.0f,0.0f });
-			scroll -= 10.0f;
+			Object3d::CameraMoveVector({ 0.0f,-1.0f,0.0f });
+			//scroll -= 10.0f;
 		}
 
 		if (input->PushKey(DIK_D))
 		{
-			//Object3d::CameraMoveEyeVector({ +1.0f,0.0f,0.0f });
+			Object3d::CameraMoveEyeVector({ +1.0f,0.0f,0.0f });
 		}
 		else if (input->PushKey(DIK_A))
 		{
-			//Object3d::CameraMoveEyeVector({ -1.0f,0.0f,0.0f });
+			Object3d::CameraMoveEyeVector({ -1.0f,0.0f,0.0f });
 		}
 	}
 
-	if (scroll >= 1710.0f) {
-		scroll = 0;
-	}
+	//if (scroll >= 1710.0f) {
+	//	scroll = 0;
+	//}
 
-	back1->SetPosition({ 600.0f -scroll,-600.0f +scroll});
-	back2->SetPosition({ 1730.0f - scroll,-1730.0f + scroll });
-	back3->SetPosition({ 2860.0f - scroll,-2860.0f + scroll });
+	//back1->SetPosition({ 600.0f -scroll,-600.0f +scroll});
+	//back2->SetPosition({ 1730.0f - scroll,-1730.0f + scroll });
+	//back3->SetPosition({ 2860.0f - scroll,-2860.0f + scroll });
 
-	object3d->Update();
-	object3d2->Update();
-	object3d3->Update();
+	playerObj->Update();
+	skydomeObj->Update();
+	groundObj->Update();
 }
 
 void GameScene::Draw()
@@ -174,9 +179,9 @@ void GameScene::Draw()
 	Sprite::PreDraw(dxCommon->GetCommandList());
 	// 背景スプライト描画
 	//sprite->Draw();
-	back1->Draw();
+	/*back1->Draw();
 	back2->Draw();
-	back3->Draw();
+	back3->Draw();*/
 	// スプライト描画後処理
 	Sprite::PostDraw();
 	// 深度バッファクリア
@@ -186,9 +191,9 @@ void GameScene::Draw()
 	// 3Dオブジェクト描画前処理
 	Object3d::PreDraw(dxCommon->GetCommandList());
 	// 3Dオブクジェクトの描画
-	object3d->Draw();
-	object3d2->Draw();
-	object3d3->Draw();
+	playerObj->Draw();
+	skydomeObj->Draw();
+	groundObj->Draw();
 	// 3Dオブジェクト描画後処理
 	Object3d::PostDraw();
 #pragma endregion 3Dオブジェクト描画

@@ -88,6 +88,8 @@ public: // メンバ関数
 	const XMFLOAT3& GetPosition() { return position; }
 	// 座標の設定
 	void SetPosition(XMFLOAT3 position) { this->position = position; }
+	// モデルスケールの設定
+	void SetScale(XMFLOAT3 scale) { this->scale = scale; }
 	// モデルの設定
 	void SetModel(Model* model) { this->model = model; };
 
