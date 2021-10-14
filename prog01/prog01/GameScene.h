@@ -12,42 +12,46 @@
 
 class GameScene
 {
-private: // ƒGƒCƒŠƒAƒX
-// Microsoft::WRL::‚ğÈ—ª
+private: // ã‚¨ã‚¤ãƒªã‚¢ã‚¹
+// Microsoft::WRL::ã‚’çœç•¥
 	template <class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
-	// DirectX::‚ğÈ—ª
+	// DirectX::ã‚’çœç•¥
 	using XMFLOAT2 = DirectX::XMFLOAT2;
 	using XMFLOAT3 = DirectX::XMFLOAT3;
 	using XMFLOAT4 = DirectX::XMFLOAT4;
 	using XMMATRIX = DirectX::XMMATRIX;
 
-private: // Ã“Iƒƒ“ƒo•Ï”
+private: // é™çš„ãƒ¡ãƒ³ãƒå¤‰æ•°
 	static const int debugTextTexNumber = 0;
 
-public: // ƒƒ“ƒoŠÖ”
-	// ƒRƒ“ƒXƒgƒNƒ‰ƒ^
+public: // ãƒ¡ãƒ³ãƒé–¢æ•°
+	// ã‚³ãƒ³ã‚¹ãƒˆã‚¯ãƒ©ã‚¿
 	GameScene();
-	// ƒfƒXƒgƒ‰ƒNƒ^
+	// ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	~GameScene();
-	// ‰Šú‰»
+	// åˆæœŸåŒ–
 	void Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio);
-	// –ˆƒtƒŒ[ƒ€ˆ—
+	// æ¯ãƒ•ãƒ¬ãƒ¼ãƒ å‡¦ç†
 	void Update();
-	// •`‰æ
+	// æç”»
 	void Draw();
 
-private: // ƒƒ“ƒo•Ï”
+private: // ãƒ¡ãƒ³ãƒå¤‰æ•°
 	DirectXCommon* dxCommon = nullptr;
 	Input* input = nullptr;
 	Audio* audio = nullptr;
 	DebugText debugText;
 
-	// ƒQ[ƒ€ƒV[ƒ“—p
+	// ã‚²ãƒ¼ãƒ ã‚·ãƒ¼ãƒ³ç”¨
 	Sprite* sprite = nullptr;
-	Model* modelFighter = nullptr;
+  Sprite* back1 = nullptr;
+	Sprite* back2 = nullptr;
+	Sprite* back3= nullptr;
+  Model* modelFighter = nullptr;
 	Model* modelFighter2 = nullptr;
 	Model* modelFighter3 = nullptr;
 	Object3d* object3d = nullptr;
 	Object3d* object3d2 = nullptr;
 	Object3d* object3d3 = nullptr;
+  float scroll;
 };
