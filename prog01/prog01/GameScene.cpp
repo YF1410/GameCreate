@@ -55,22 +55,19 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio)
 
 	back1 = Sprite::Create(2, { 0.0f,0.0f });
 	back1->SetSize({ 1600,1600 });
-	back1->SetPosition({ 0.0f,0.0f });
 	back1->SetRotation(45.0f);
 
-	back2 = Sprite::Create(3, { 0.0f,0.0f });
+	back2 = Sprite::Create(3, { 0.0f,-1600.0f });
 	back2->SetSize({ 1600,1600 });
-	back2->SetPosition({ 0.0f,-1600.0f });
 	back2->SetRotation(45.0f);
 
-	back3 = Sprite::Create(4, { 0.0f,0.0f });
+	back3 = Sprite::Create(4, { 0.0f,-3200.0f });
 	back3->SetSize({ 1600,1600 });
-	back3->SetPosition({ 0.0f,-3200.0f });
 	back3->SetRotation(45.0f);
 
 	// 3Dオブジェクト生成
 	object3d = Object3d::Create();
-	object3d->Update();
+	object3d->SetPosition({-30.0f,-15.0f,0.0f});
 
 	//サウンド再生
 	audio->PlayWave("Resources/Alarm01.wav");
