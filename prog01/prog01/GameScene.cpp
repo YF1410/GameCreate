@@ -68,7 +68,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio)
 	back3->SetRotation(45.0f);
 
 	//.objの名前を指定してモデルを読み込む
-	playerModel = playerModel->CreateFromObject("untitled");
+	playerModel = playerModel->CreateFromObject("player");
 	skydomeModel = skydomeModel->CreateFromObject("skydome");
 	groundModel = groundModel->CreateFromObject("ground");
 	// 3Dオブジェクト生成
