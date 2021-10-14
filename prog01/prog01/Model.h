@@ -5,6 +5,7 @@
 #include <d3d12.h>
 #include <DirectXMath.h>
 #include <d3dx12.h>
+#include <string>
 
 class Model
 {
@@ -45,13 +46,6 @@ public: // サブクラス
 		}
 	};
 
-	// 定数バッファ用データ構造体B0
-	struct ConstBufferDataB0
-	{
-		//XMFLOAT4 color; // 色 (RGBA)
-		XMMATRIX mat; // ３Ｄ変換行列
-	};
-
 	// 定数バッファ用データ構造体B1
 	struct ConstBufferDataB1
 	{
@@ -65,16 +59,9 @@ public: // サブクラス
 
 private: // 定数
 
-	// オブジェクトの最大枚数
-	static const int ObjectCount = 512;
-
 public: // 静的メンバ関数
 	// 静的初期化
 	static bool StaticInitialize(ID3D12Device* device);
-	// 描画前処理
-	static void PreDraw(ID3D12GraphicsCommandList* cmdList);
-	// 描画後処理
-	static void PostDraw();
 
 	Model* CreateFromObject(const std::string& text);
 
@@ -83,12 +70,6 @@ private: // 静的メンバ変数
 	static ID3D12Device* device;
 	// デスクリプタサイズ
 	static UINT descriptorHandleIncrementSize;
-	// コマンドリスト
-	static ID3D12GraphicsCommandList* cmdList;
-	// ルートシグネチャ
-	static ComPtr<ID3D12RootSignature> rootsignature;
-	// パイプラインステートオブジェクト
-	static ComPtr<ID3D12PipelineState> pipelinestate;
 	// デスクリプタヒープ
 	ComPtr<ID3D12DescriptorHeap> descHeap;
 	// 頂点バッファ
@@ -96,7 +77,7 @@ private: // 静的メンバ変数
 	// インデックスバッファ
 	ComPtr<ID3D12Resource> indexBuff;
 	// テクスチャバッファ
-	ComPtr<ID3D12Resource> texbuff[ObjectCount];
+	ComPtr<ID3D12Resource> texbuff;
 	// シェーダリソースビューのハンドル(CPU)
 	CD3DX12_CPU_DESCRIPTOR_HANDLE cpuDescHandleSRV;
 	// シェーダリソースビューのハンドル(CPU)
@@ -115,8 +96,6 @@ private: // 静的メンバ変数
 private:// 静的メンバ関数
 	// デスクリプタヒープの初期化
 	bool InitializeDescriptorHeap();
-	// グラフィックパイプライン生成
-	bool InitializeGraphicsPipeline();
 	// テクスチャ読み込み
 	bool LoadTexture(const std::string& directoryPath, const std::string& filename);
 	// モデル作成
@@ -125,16 +104,10 @@ private:// 静的メンバ関数
 	void LoadMaterial(const std::string& directoryPath, const std::string& filename);
 
 public: // メンバ関数
-	bool Initialize();
-	// 毎フレーム処理
-	void Update(XMMATRIX matWorld, XMMATRIX matView, XMMATRIX matProjection);
+	bool Initialize(const std::string& text);
 	// 描画
-	void Draw();
+	void Draw(ID3D12GraphicsCommandList* cmdList);
 
 private: // メンバ変数
-	ComPtr<ID3D12Resource> constBuffB0; // 定数バッファ
 	ComPtr<ID3D12Resource> constBuffB1; // 定数バッファ
-
-	// テクスチャ番号
-	UINT number = 1;
 };
