@@ -1,13 +1,11 @@
 #include "GameScene.h"
 #include <cassert>
 
-GameScene::GameScene()
-{
+GameScene::GameScene() {
 
 }
 
-GameScene::~GameScene()
-{
+GameScene::~GameScene() {
 	safe_delete(sprite);
 	safe_delete(back1);
 	safe_delete(back2);
@@ -17,8 +15,7 @@ GameScene::~GameScene()
 	safe_delete(groundObj);
 }
 
-void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio)
-{
+void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio) {
 	// nullptrチェック
 	assert(dxCommon);
 	assert(input);
@@ -82,7 +79,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio)
 
 	playerObj->SetPosition({ 0.0f, 0.0f, -35.0f });
 	float playerScale = 1.0f;
-	playerObj->SetScale({playerScale,playerScale,playerScale});
+	playerObj->SetScale({ playerScale,playerScale,playerScale });
 	float groundScale = 10.0f;
 	groundObj->SetScale({ groundScale,groundScale, groundScale });
 	//groundObj->SetPosition({0.0f, -2.5f, 0.0f});
@@ -91,11 +88,9 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio)
 	audio->PlayWave("Resources/Alarm01.wav");
 }
 
-void GameScene::Update()
-{
+void GameScene::Update() {
 	//キーが押されているときの処理
-	if (input->TriggerKey(DIK_0))
-	{
+	if (input->TriggerKey(DIK_0)) 	{
 		OutputDebugStringA("Hit 0\n");
 	}
 
@@ -105,55 +100,120 @@ void GameScene::Update()
 	debugText.Print("Nihon Kogakuin", 200, 200, 2.0f);
 
 	// オブジェクト移動
-	if (input->PushKey(DIK_UP) || input->PushKey(DIK_DOWN) || input->PushKey(DIK_RIGHT) || input->PushKey(DIK_LEFT))
-	{
+	if (input->PushKey(DIK_UP) || input->PushKey(DIK_DOWN) || input->PushKey(DIK_RIGHT) || input->PushKey(DIK_LEFT)) 	{
 		// 現在の座標を取得
-		XMFLOAT3 position = playerObj->GetPosition();
+		XMFLOAT3 playerPos = playerObj->GetPosition();
+		XMFLOAT3 skydomePos = skydomeObj->GetPosition();
+		XMFLOAT3 cameraEye = Object3d::GetEye();
+		XMFLOAT3 cameraTarget = Object3d::GetTarget();
 
 		// 移動後の座標を計算
-		if (input->PushKey(DIK_UP))
-		{
-			position.z += 1.0f;
+		if (input->PushKey(DIK_UP)) 		{
+			playerPos.z += 1.0f;
+			skydomePos.z += 1.0f;
+			cameraEye.z += 1.0f;
+			cameraTarget.z += 1.0f;
 		}
-		else if (input->PushKey(DIK_DOWN))
-		{
-			position.z -= 1.0f;
+		else if (input->PushKey(DIK_DOWN)) 		{
+			playerPos.z -= 1.0f;
+			skydomePos.z -= 1.0f;
+			cameraEye.z -= 1.0f;
+			cameraTarget.z -= 1.0f;
 		}
 
-		if (input->PushKey(DIK_RIGHT))
-		{
-			position.x += 1.0f;
+		if (input->PushKey(DIK_RIGHT)) 		{
+			playerPos.x += 1.0f;
+			skydomePos.x += 1.0f;
+			cameraEye.x += 1.0f;
+			cameraTarget.x += 1.0f;
 		}
-		else if (input->PushKey(DIK_LEFT))
-		{
-			position.x -= 1.0f;
+		else if (input->PushKey(DIK_LEFT)) 		{
+			playerPos.x -= 1.0f;
+			skydomePos.x -= 1.0f;
+			cameraEye.x -= 1.0f;
+			cameraTarget.x -= 1.0f;
 		}
 
 		// 座標の変更を反映
-		playerObj->SetPosition(position);
+		playerObj->SetPosition(playerPos);
+		skydomeObj->SetPosition(skydomePos);
+		Object3d::SetEye(cameraEye);
+		Object3d::SetTarget(cameraTarget);
 	}
 
 	// カメラ移動
-	if (input->PushKey(DIK_W) || input->PushKey(DIK_S) || input->PushKey(DIK_D) || input->PushKey(DIK_A))
-	{
-		if (input->PushKey(DIK_W))
-		{
+	if (input->PushKey(DIK_W) || input->PushKey(DIK_S) || input->PushKey(DIK_D) || input->PushKey(DIK_A)) 	{
+		if (input->PushKey(DIK_W)) 		{
 			Object3d::CameraMoveVector({ 0.0f,+1.0f,0.0f });
 			//scroll += 10.0f;
 		}
-		else if (input->PushKey(DIK_S))
-		{
+		else if (input->PushKey(DIK_S)) 		{
 			Object3d::CameraMoveVector({ 0.0f,-1.0f,0.0f });
 			//scroll -= 10.0f;
 		}
 
-		if (input->PushKey(DIK_D))
-		{
+		if (input->PushKey(DIK_D)) 		{
 			Object3d::CameraMoveEyeVector({ +1.0f,0.0f,0.0f });
 		}
-		else if (input->PushKey(DIK_A))
-		{
+		else if (input->PushKey(DIK_A)) 		{
 			Object3d::CameraMoveEyeVector({ -1.0f,0.0f,0.0f });
+		}
+	}
+
+	if (input->TriggerKey(DIK_SPACE) && !isJumpUp && !isJumpDown) {
+		isJumpUp = true;
+	}
+
+	if (isJumpUp == true) {
+		// 現在の座標を取得
+		XMFLOAT3 playerPos = playerObj->GetPosition();
+		XMFLOAT3 skydomePos = skydomeObj->GetPosition();
+		XMFLOAT3 cameraEye = Object3d::GetEye();
+		XMFLOAT3 cameraTarget = Object3d::GetTarget();
+
+		// 移動後の座標を計算
+		playerPos.z += 1.0f;
+		playerPos.y += 1.0f;
+		skydomePos.z += 1.0f;
+		cameraEye.z += 1.0f;
+		cameraTarget.z += 1.0f;
+
+
+		// 座標の変更を反映
+		playerObj->SetPosition(playerPos);
+		skydomeObj->SetPosition(skydomePos);
+		Object3d::SetEye(cameraEye);
+		Object3d::SetTarget(cameraTarget);
+
+		if (playerPos.y >= 5.0f) {
+			isJumpUp = false;
+			isJumpDown = true;
+		}
+	}
+
+	if (isJumpDown == true) {
+		// 現在の座標を取得
+		XMFLOAT3 playerPos = playerObj->GetPosition();
+		XMFLOAT3 skydomePos = skydomeObj->GetPosition();
+		XMFLOAT3 cameraEye = Object3d::GetEye();
+		XMFLOAT3 cameraTarget = Object3d::GetTarget();
+
+		// 移動後の座標を計算
+		playerPos.z += 1.0f;
+		playerPos.y -= 1.0f;
+		skydomePos.z += 1.0f;
+		cameraEye.z += 1.0f;
+		cameraTarget.z += 1.0f;
+
+
+		// 座標の変更を反映
+		playerObj->SetPosition(playerPos);
+		skydomeObj->SetPosition(skydomePos);
+		Object3d::SetEye(cameraEye);
+		Object3d::SetTarget(cameraTarget);
+
+		if (playerPos.y <= 0.0f) {
+			isJumpDown = false;
 		}
 	}
 
@@ -170,8 +230,7 @@ void GameScene::Update()
 	groundObj->Update();
 }
 
-void GameScene::Draw()
-{
+void GameScene::Draw() {
 	// コマンドリストの取得
 	ID3D12GraphicsCommandList* cmdList = dxCommon->GetCommandList();
 #pragma region 背景スプライト描画

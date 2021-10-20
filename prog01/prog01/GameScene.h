@@ -53,4 +53,6 @@ private: // メンバ変数
 	Object3d* skydomeObj = nullptr;
 	Object3d* groundObj = nullptr;
 	float scroll = 0.0f;
+	bool isJumpUp = false;
+	bool isJumpDown = false;
 };
