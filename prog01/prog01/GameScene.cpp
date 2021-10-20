@@ -10,10 +10,14 @@ GameScene::~GameScene() {
 	safe_delete(skydomeModel);
 	safe_delete(groundModel);
 	safe_delete(largeCarModel);
+	safe_delete(miniCarModel);
+	safe_delete(truckModel);
 	safe_delete(playerObj);
 	safe_delete(skydomeObj);
 	safe_delete(groundObj);
 	safe_delete(largeCarObj);
+	safe_delete(miniCarObj);
+	safe_delete(truckObj);
 }
 
 void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio) {
@@ -40,16 +44,22 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio) 
 	skydomeModel = skydomeModel->CreateFromObject("skydome");
 	groundModel = groundModel->CreateFromObject("ground");
 	largeCarModel = largeCarModel->CreateFromObject("largeCar");
+	miniCarModel = miniCarModel->CreateFromObject("miniCar");
+	truckModel = truckModel->CreateFromObject("truck");
 	// 3Dオブジェクト生成
 	playerObj = Object3d::Create();
 	skydomeObj = Object3d::Create();
 	groundObj = Object3d::Create();
 	largeCarObj = Object3d::Create();
+	miniCarObj = Object3d::Create();
+	truckObj = Object3d::Create();
 	// 3Dオブジェクトにモデルを割り当てる
 	playerObj->SetModel(playerModel);
 	skydomeObj->SetModel(skydomeModel);
 	groundObj->SetModel(groundModel);
 	largeCarObj->SetModel(largeCarModel);
+	miniCarObj->SetModel(miniCarModel);
+	truckObj->SetModel(truckModel);
 
 	playerObj->SetPosition({ 0.0f, 0.0f, -35.0f });
 	float playerScale = 1.0f;
@@ -57,8 +67,10 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio) 
 	float groundScale = 15.0f;
 	groundObj->SetScale({ groundScale,groundScale, groundScale });
 
-	float carLargeScale = 3.0f;
-	largeCarObj->SetScale({ carLargeScale,carLargeScale,carLargeScale });
+	float carScale = 3.0f;
+	largeCarObj->SetScale({ carScale,carScale,carScale });
+	miniCarObj->SetScale({ carScale,carScale,carScale });
+	truckObj->SetScale({ carScale,carScale,carScale });
 	//groundObj->SetPosition({0.0f, -2.5f, 0.0f});
 
 	//サウンド再生
@@ -210,6 +222,8 @@ void GameScene::Update() {
 	skydomeObj->Update();
 	groundObj->Update();
 	largeCarObj->Update();
+	miniCarObj->Update();
+	truckObj->Update();
 }
 
 void GameScene::Draw() {
@@ -233,6 +247,8 @@ void GameScene::Draw() {
 	skydomeObj->Draw();
 	groundObj->Draw();
 	largeCarObj->Draw();
+	//miniCarObj->Draw();
+	truckObj->Draw();
 	// 3Dオブジェクト描画後処理
 	Object3d::PostDraw();
 #pragma endregion 3Dオブジェクト描画
