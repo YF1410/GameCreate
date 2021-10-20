@@ -6,13 +6,14 @@ GameScene::GameScene() {
 }
 
 GameScene::~GameScene() {
-	safe_delete(sprite);
-	safe_delete(back1);
-	safe_delete(back2);
-	safe_delete(back3);
+	safe_delete(playerModel);
+	safe_delete(skydomeModel);
+	safe_delete(groundModel);
+	safe_delete(largeCarModel);
 	safe_delete(playerObj);
 	safe_delete(skydomeObj);
 	safe_delete(groundObj);
+	safe_delete(largeCarObj);
 }
 
 void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio) {
@@ -33,55 +34,31 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio) 
 	debugText.Initialize(debugTextTexNumber);
 
 	// テクスチャ読み込み
-	if (!Sprite::LoadTexture(1, L"Resources/APEX_01.png")) {
-		assert(0);
-	}
-
-	if (!Sprite::LoadTexture(2, L"Resources/back/back1.png")) {
-		assert(0);
-	}
-	if (!Sprite::LoadTexture(3, L"Resources/back/back2.png")) {
-		assert(0);
-	}
-	if (!Sprite::LoadTexture(4, L"Resources/back/back3.png")) {
-		assert(0);
-	}
-
-	// 背景スプライト生成
-	/*sprite = Sprite::Create(1, { 0.0f,0.0f });
-	sprite->SetSize({ WinApp::window_width,WinApp::window_height });
-	sprite->SetPosition({ 0.0f,0.0f });*/
-
-	back1 = Sprite::Create(2, { 0.0f,0.0f });
-	back1->SetSize({ 1600,1600 });
-	back1->SetRotation(45.0f);
-
-	back2 = Sprite::Create(3, { 0.0f,-1600.0f });
-	back2->SetSize({ 1600,1600 });
-	back2->SetRotation(45.0f);
-
-	back3 = Sprite::Create(4, { 0.0f,-3200.0f });
-	back3->SetSize({ 1600,1600 });
-	back3->SetRotation(45.0f);
 
 	//.objの名前を指定してモデルを読み込む
 	playerModel = playerModel->CreateFromObject("player");
 	skydomeModel = skydomeModel->CreateFromObject("skydome");
 	groundModel = groundModel->CreateFromObject("ground");
+	largeCarModel = largeCarModel->CreateFromObject("largeCar");
 	// 3Dオブジェクト生成
 	playerObj = Object3d::Create();
 	skydomeObj = Object3d::Create();
 	groundObj = Object3d::Create();
+	largeCarObj = Object3d::Create();
 	// 3Dオブジェクトにモデルを割り当てる
 	playerObj->SetModel(playerModel);
 	skydomeObj->SetModel(skydomeModel);
 	groundObj->SetModel(groundModel);
+	largeCarObj->SetModel(largeCarModel);
 
 	playerObj->SetPosition({ 0.0f, 0.0f, -35.0f });
 	float playerScale = 1.0f;
 	playerObj->SetScale({ playerScale,playerScale,playerScale });
-	float groundScale = 10.0f;
+	float groundScale = 15.0f;
 	groundObj->SetScale({ groundScale,groundScale, groundScale });
+
+	float carLargeScale = 3.0f;
+	largeCarObj->SetScale({ carLargeScale,carLargeScale,carLargeScale });
 	//groundObj->SetPosition({0.0f, -2.5f, 0.0f});
 
 	//サウンド再生
@@ -109,29 +86,29 @@ void GameScene::Update() {
 
 		// 移動後の座標を計算
 		if (input->PushKey(DIK_UP)) 		{
-			playerPos.z += 1.0f;
-			skydomePos.z += 1.0f;
-			cameraEye.z += 1.0f;
-			cameraTarget.z += 1.0f;
+			playerPos.z += zMove;
+			skydomePos.z += zMove;
+			cameraEye.z += zMove;
+			cameraTarget.z += zMove;
 		}
 		else if (input->PushKey(DIK_DOWN)) 		{
-			playerPos.z -= 1.0f;
-			skydomePos.z -= 1.0f;
-			cameraEye.z -= 1.0f;
-			cameraTarget.z -= 1.0f;
+			playerPos.z -= zMove;
+			skydomePos.z -= zMove;
+			cameraEye.z -= zMove;
+			cameraTarget.z -= zMove;
 		}
 
 		if (input->PushKey(DIK_RIGHT)) 		{
-			playerPos.x += 1.0f;
-			skydomePos.x += 1.0f;
-			cameraEye.x += 1.0f;
-			cameraTarget.x += 1.0f;
+			playerPos.x += zMove;
+			skydomePos.x += zMove;
+			cameraEye.x += zMove;
+			cameraTarget.x += zMove;
 		}
 		else if (input->PushKey(DIK_LEFT)) 		{
-			playerPos.x -= 1.0f;
-			skydomePos.x -= 1.0f;
-			cameraEye.x -= 1.0f;
-			cameraTarget.x -= 1.0f;
+			playerPos.x -= zMove;
+			skydomePos.x -= zMove;
+			cameraEye.x -= zMove;
+			cameraTarget.x -= zMove;
 		}
 
 		// 座標の変更を反映
@@ -172,11 +149,11 @@ void GameScene::Update() {
 		XMFLOAT3 cameraTarget = Object3d::GetTarget();
 
 		// 移動後の座標を計算
-		playerPos.z += 1.0f;
-		playerPos.y += 1.0f;
-		skydomePos.z += 1.0f;
-		cameraEye.z += 1.0f;
-		cameraTarget.z += 1.0f;
+		playerPos.z += zMove;
+		playerPos.y += yMove;
+		skydomePos.z += zMove;
+		cameraEye.z += zMove;
+		cameraTarget.z += zMove;
 
 
 		// 座標の変更を反映
@@ -185,7 +162,7 @@ void GameScene::Update() {
 		Object3d::SetEye(cameraEye);
 		Object3d::SetTarget(cameraTarget);
 
-		if (playerPos.y >= 5.0f) {
+		if (playerPos.y >= 2.5f) {
 			isJumpUp = false;
 			isJumpDown = true;
 		}
@@ -199,12 +176,11 @@ void GameScene::Update() {
 		XMFLOAT3 cameraTarget = Object3d::GetTarget();
 
 		// 移動後の座標を計算
-		playerPos.z += 1.0f;
-		playerPos.y -= 1.0f;
-		skydomePos.z += 1.0f;
-		cameraEye.z += 1.0f;
-		cameraTarget.z += 1.0f;
-
+		playerPos.z += zMove;
+		playerPos.y -= yMove;
+		skydomePos.z += zMove;
+		cameraEye.z += zMove;
+		cameraTarget.z += zMove;
 
 		// 座標の変更を反映
 		playerObj->SetPosition(playerPos);
@@ -214,20 +190,26 @@ void GameScene::Update() {
 
 		if (playerPos.y <= 0.0f) {
 			isJumpDown = false;
+			count++;
 		}
 	}
 
-	//if (scroll >= 1710.0f) {
-	//	scroll = 0;
-	//}
+	if (count >= 3) {
+		XMFLOAT3 groundPos = groundObj->GetPosition();
+		XMFLOAT3 playerPos = playerObj->GetPosition();
+		groundPos.z = playerPos.z + 35.0f;
+		groundObj->SetPosition(groundPos);
+		count = 0;
+	}
 
-	//back1->SetPosition({ 600.0f -scroll,-600.0f +scroll});
-	//back2->SetPosition({ 1730.0f - scroll,-1730.0f + scroll });
-	//back3->SetPosition({ 2860.0f - scroll,-2860.0f + scroll });
+	XMFLOAT3 largeCarPos = largeCarObj->GetPosition();
+	largeCarPos.x += 1.0f;
+	largeCarObj->SetPosition(largeCarPos);
 
 	playerObj->Update();
 	skydomeObj->Update();
 	groundObj->Update();
+	largeCarObj->Update();
 }
 
 void GameScene::Draw() {
@@ -237,10 +219,7 @@ void GameScene::Draw() {
 	// 背景スプライト描画前処理
 	Sprite::PreDraw(dxCommon->GetCommandList());
 	// 背景スプライト描画
-	//sprite->Draw();
-	/*back1->Draw();
-	back2->Draw();
-	back3->Draw();*/
+
 	// スプライト描画後処理
 	Sprite::PostDraw();
 	// 深度バッファクリア
@@ -253,6 +232,7 @@ void GameScene::Draw() {
 	playerObj->Draw();
 	skydomeObj->Draw();
 	groundObj->Draw();
+	largeCarObj->Draw();
 	// 3Dオブジェクト描画後処理
 	Object3d::PostDraw();
 #pragma endregion 3Dオブジェクト描画
