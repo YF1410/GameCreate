@@ -4,7 +4,7 @@
 o 
 
 # material
-mtllib carTruck.mtl
+mtllib truck.mtl
 usemtl palette
 
 # normals

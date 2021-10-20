@@ -4,7 +4,7 @@
 o 
 
 # material
-mtllib carMini.mtl
+mtllib miniCar.mtl
 usemtl palette
 
 # normals

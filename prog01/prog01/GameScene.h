@@ -50,10 +50,14 @@ private: // メンバ変数
 	Model* skydomeModel = nullptr;
 	Model* groundModel = nullptr;
 	Model* largeCarModel = nullptr;
+	Model* miniCarModel = nullptr;
+	Model* truckModel = nullptr;
 	Object3d* playerObj = nullptr;
 	Object3d* skydomeObj = nullptr;
 	Object3d* groundObj = nullptr;
 	Object3d* largeCarObj = nullptr;
+	Object3d* miniCarObj = nullptr;
+	Object3d* truckObj = nullptr;
 	float scroll = 0.0f;
 	bool isJumpUp = false;
 	bool isJumpDown = false;
