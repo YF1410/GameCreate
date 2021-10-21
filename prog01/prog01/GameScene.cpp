@@ -23,6 +23,12 @@ GameScene::~GameScene() {
 	safe_delete(largeCarObj);
 	safe_delete(miniCarObj);
 	safe_delete(truckObj);
+	safe_delete(warningMarkLT);
+	safe_delete(warningMarkLM);
+	safe_delete(warningMarkLB);
+	safe_delete(warningMarkRT);
+	safe_delete(warningMarkRM);
+	safe_delete(warningMarkRB);
 }
 
 void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio) {
@@ -43,7 +49,39 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio) 
 	debugText.Initialize(debugTextTexNumber);
 
 	// テクスチャ読み込み
+	if (!Sprite::LoadTexture(1, L"Resources/warningMark.png")) {
+		assert(0);
+	}
+	// 前景スプライト生成
+	//警告(左上)
+	warningMarkLT = Sprite::Create(1, { 0.0f,0.0f });
+	warningMarkLT->SetSize({ 100.0f,100.0f });
+	warningMarkLT->SetPosition({ 100.0f,100.0f });
+	//(左中)
+	warningMarkLM = Sprite::Create(1, { 0.0f,0.0f });
+	warningMarkLM->SetSize({ 100.0f,100.0f });
+	warningMarkLM->SetPosition({ 100.0f,400.0f });
+	//(左下)
+	warningMarkLB = Sprite::Create(1, { 0.0f,0.0f });
+	warningMarkLB->SetSize({ 100.0f,100.0f });
+	warningMarkLB->SetPosition({ 100.0f,700.0f });
 
+	//(右上)
+	warningMarkRT = Sprite::Create(1, { 0.0f,0.0f });
+	warningMarkRT->SetSize({ 100.0f,100.0f });
+	warningMarkRT->SetPosition({ 1024.0f,100.0f });
+	//(右中)
+	warningMarkRM = Sprite::Create(1, { 0.0f,0.0f });
+	warningMarkRM->SetSize({ 100.0f,100.0f });
+	warningMarkRM->SetPosition({ 1024.0f,400.0f });
+	//(右下)
+	warningMarkRB = Sprite::Create(1, { 0.0f,0.0f });
+	warningMarkRB->SetSize({ 100.0f,100.0f });
+	warningMarkRB->SetPosition({ 1024.0f,700.0f });
+	for (int i = 0; i < 6; i++) {
+		isWarning[i] = 0;
+		blinking[i] = 0;
+	}
 	//.objの名前を指定してモデルを読み込む
 	playerModel = playerModel->CreateFromObject("player");
 	playerJump1Model = playerJump1Model->CreateFromObject("playerJump1");
@@ -236,7 +274,40 @@ void GameScene::Update() {
 	//XMFLOAT3 largeCarPos = largeCarObj->GetPosition();
 	//largeCarPos.x += 1.0f;
 	//largeCarObj->SetPosition(largeCarPos);
+	// 
+	//警告
+	if (input->TriggerKey(DIK_1))
+	{
+		isWarning[0] = 1;
+		isWarning[1] = 1;
+		isWarning[2] = 1;
+		isWarning[3] = 1;
+		isWarning[4] = 1;
+		isWarning[5] = 1;
+	}
+	else if (input->TriggerKey(DIK_2))
+	{
+		isWarning[0] = 0;
+		isWarning[1] = 0;
+		isWarning[2] = 0;
+		isWarning[3] = 0;
+		isWarning[4] = 0;
+		isWarning[5] = 0;
+	}
 
+	//警告点滅
+	for (int i = 0; i < 6; i++)
+	{
+		if (isWarning[i] == 1) {
+			blinking[i]++;
+		}
+		else if (isWarning == 0) {
+			blinking[i] = 0;
+		}
+		if (blinking[i] >= 20) {
+			blinking[i] = 0;
+		}
+	}
 	playerObj->Update();
 	playerJump1Obj->Update();
 	playerJump2Obj->Update();
@@ -289,6 +360,26 @@ void GameScene::Draw() {
 #pragma region 前景スプライト描画
 	// 前景スプライト描画前処理
 	Sprite::PreDraw(dxCommon->GetCommandList());
+
+	// 前景スプライトの描画
+	if (isWarning[0] == 1 && blinking[0] <= 10) {
+		warningMarkLT->Draw();
+	}
+	if (isWarning[1] == 1 && blinking[1] <= 10) {
+		warningMarkLM->Draw();
+	}
+	if (isWarning[2] == 1 && blinking[2] <= 10) {
+		warningMarkLB->Draw();
+	}
+	if (isWarning[3] == 1 && blinking[3] <= 10) {
+		warningMarkRT->Draw();
+	}
+	if (isWarning[4] == 1 && blinking[4] <= 10) {
+		warningMarkRM->Draw();
+	}
+	if (isWarning[5] == 1 && blinking[5] <= 10) {
+		warningMarkRB->Draw();
+	}
 	// デバッグテキストの描画
 	debugText.DrawAll(dxCommon->GetCommandList());
 	// スプライト描画後処理
