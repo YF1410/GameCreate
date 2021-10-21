@@ -46,6 +46,12 @@ private: // メンバ変数
 	Sprite* back1 = nullptr;
 	Sprite* back2 = nullptr;
 	Sprite* back3 = nullptr;
+	Sprite *warningMarkLT = nullptr;
+	Sprite *warningMarkLM = nullptr;
+	Sprite *warningMarkLB = nullptr;
+	Sprite *warningMarkRT = nullptr;
+	Sprite *warningMarkRM = nullptr;
+	Sprite *warningMarkRB = nullptr;
 	Model* playerModel = nullptr;
 	Model* playerJump1Model = nullptr;
 	Model* playerJump2Model = nullptr;
@@ -74,4 +80,6 @@ private: // メンバ変数
 	int count = 0;
 	bool isLeftLeg = true;
 	bool isRightLeg = false;
+	bool isWarning[6];
+	int blinking[6];//点滅用
 };
