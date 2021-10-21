@@ -20,9 +20,14 @@ GameScene::~GameScene() {
 	safe_delete(playerJump2Obj);
 	safe_delete(skydomeObj);
 	safe_delete(groundObj);
-	safe_delete(largeCarObj);
-	safe_delete(miniCarObj);
-	safe_delete(truckObj);
+	for (int i = 0; i < 2; i++) {
+		safe_delete(largeCarObj[i]);
+		safe_delete(miniCarObj[i]);
+		safe_delete(truckObj[i]);
+		safe_delete(largeCarRObj[i]);
+		safe_delete(miniCarRObj[i]);
+		safe_delete(truckRObj[i]);
+	}
 	safe_delete(warningMarkLT);
 	safe_delete(warningMarkLM);
 	safe_delete(warningMarkLB);
@@ -54,32 +59,26 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio) 
 	}
 	// 前景スプライト生成
 	//警告(左上)
-	warningMarkLT = Sprite::Create(1, { 0.0f,0.0f });
+	warningMarkLT = Sprite::Create(1, { 100.0f,100.0f });
 	warningMarkLT->SetSize({ 100.0f,100.0f });
-	warningMarkLT->SetPosition({ 100.0f,100.0f });
 	//(左中)
-	warningMarkLM = Sprite::Create(1, { 0.0f,0.0f });
+	warningMarkLM = Sprite::Create(1, { 100.0f,400.0f });
 	warningMarkLM->SetSize({ 100.0f,100.0f });
-	warningMarkLM->SetPosition({ 100.0f,400.0f });
 	//(左下)
-	warningMarkLB = Sprite::Create(1, { 0.0f,0.0f });
+	warningMarkLB = Sprite::Create(1, { 100.0f,700.0f });
 	warningMarkLB->SetSize({ 100.0f,100.0f });
-	warningMarkLB->SetPosition({ 100.0f,700.0f });
 
 	//(右上)
-	warningMarkRT = Sprite::Create(1, { 0.0f,0.0f });
+	warningMarkRT = Sprite::Create(1, { 1024.0f,100.0f });
 	warningMarkRT->SetSize({ 100.0f,100.0f });
-	warningMarkRT->SetPosition({ 1024.0f,100.0f });
 	//(右中)
-	warningMarkRM = Sprite::Create(1, { 0.0f,0.0f });
+	warningMarkRM = Sprite::Create(1, { 1024.0f,400.0f });
 	warningMarkRM->SetSize({ 100.0f,100.0f });
-	warningMarkRM->SetPosition({ 1024.0f,400.0f });
 	//(右下)
-	warningMarkRB = Sprite::Create(1, { 0.0f,0.0f });
+	warningMarkRB = Sprite::Create(1, { 1024.0f,700.0f });
 	warningMarkRB->SetSize({ 100.0f,100.0f });
-	warningMarkRB->SetPosition({ 1024.0f,700.0f });
 	for (int i = 0; i < 6; i++) {
-		isWarning[i] = 0;
+		isWarning[i] = false;
 		blinking[i] = 0;
 	}
 	//.objの名前を指定してモデルを読み込む
@@ -89,26 +88,40 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio) 
 	skydomeModel = skydomeModel->CreateFromObject("skydome");
 	groundModel = groundModel->CreateFromObject("ground");
 	largeCarModel = largeCarModel->CreateFromObject("largeCar");
+	largeCarRModel = largeCarRModel->CreateFromObject("largeCarR");
 	miniCarModel = miniCarModel->CreateFromObject("miniCar");
+	miniCarRModel = miniCarRModel->CreateFromObject("miniCarR");
 	truckModel = truckModel->CreateFromObject("truck");
+	truckRModel = truckRModel->CreateFromObject("truckR");
+
 	// 3Dオブジェクト生成
 	playerObj = Object3d::Create();
 	playerJump1Obj = Object3d::Create();
 	playerJump2Obj = Object3d::Create();
 	skydomeObj = Object3d::Create();
 	groundObj = Object3d::Create();
-	largeCarObj = Object3d::Create();
-	miniCarObj = Object3d::Create();
-	truckObj = Object3d::Create();
+	for (int i = 0; i < 2; i++) {
+		largeCarObj[i] = Object3d::Create();
+		miniCarObj[i] = Object3d::Create();
+		truckObj[i] = Object3d::Create();
+		largeCarRObj[i] = Object3d::Create();
+		miniCarRObj[i] = Object3d::Create();
+		truckRObj[i] = Object3d::Create();
+	}
 	// 3Dオブジェクトにモデルを割り当てる
 	playerObj->SetModel(playerModel);
 	playerJump1Obj->SetModel(playerJump1Model);
 	playerJump2Obj->SetModel(playerJump2Model);
 	skydomeObj->SetModel(skydomeModel);
 	groundObj->SetModel(groundModel);
-	largeCarObj->SetModel(largeCarModel);
-	miniCarObj->SetModel(miniCarModel);
-	truckObj->SetModel(truckModel);
+	for (int i = 0; i < 2; i++) {
+		largeCarObj[i]->SetModel(largeCarModel);
+		miniCarObj[i]->SetModel(miniCarModel);
+		truckObj[i]->SetModel(truckModel);
+		largeCarRObj[i]->SetModel(largeCarRModel);
+		miniCarRObj[i]->SetModel(miniCarRModel);
+		truckRObj[i]->SetModel(truckRModel);
+	}
 
 	playerObj->SetPosition({ 0.0f, 0.0f, -35.0f });
 	playerObj->SetScale({ playerScale,playerScale,playerScale });
@@ -119,17 +132,35 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio) 
 
 	groundObj->SetScale({ groundScale,groundScale, groundScale });
 
-	largeCarObj->SetScale({ largeCarScale,largeCarScale,largeCarScale });
-	miniCarObj->SetScale({ miniCarScale,miniCarScale,miniCarScale });
-	truckObj->SetScale({ truckScale,truckScale,truckScale });
+	for (int i = 0; i < 2; i++) {
+		largeCarObj[i]->SetScale({ largeCarScale,largeCarScale,largeCarScale });
+		miniCarObj[i]->SetScale({ miniCarScale,miniCarScale,miniCarScale });
+		truckObj[i]->SetScale({ truckScale,truckScale,truckScale });
+		largeCarRObj[i]->SetScale({ largeCarScale,largeCarScale,largeCarScale });
+		miniCarRObj[i]->SetScale({ miniCarScale,miniCarScale,miniCarScale });
+		truckRObj[i]->SetScale({ truckScale,truckScale,truckScale });
+	}
 
-	largeCarObj->SetPosition({ 0.0f, 0.0f, -10.0f });
-	miniCarObj->SetPosition({ 0.0f, 0.0f, -20.0f });
-	truckObj->SetPosition({ 0.0f, 0.0f, 10.0f });
+	largeCarObj[0]->SetPosition({ 50.0f, 0.0f, -25.0f });
+	miniCarObj[0]->SetPosition({ 25.0f, 0.0f, -25.0f });
+	truckObj[0]->SetPosition({ 0.0f, 0.0f, -25.0f });
+
+	largeCarObj[1]->SetPosition({ 50.0f, 0.0f, 5.0f });
+	miniCarObj[1]->SetPosition({ 25.0f, 0.0f, 5.0f });
+	truckObj[1]->SetPosition({ 0.0f, 0.0f, 5.0f });
+
+	largeCarRObj[0]->SetPosition({ 50.0f, 0.0f, -15.0f });
+	miniCarRObj[0]->SetPosition({ 25.0f, 0.0f, -15.0f });
+	truckRObj[0]->SetPosition({ 0.0f, 0.0f, -15.0f });
+
+	largeCarRObj[1]->SetPosition({ 50.0f, 0.0f, 15.0f });
+	miniCarRObj[1]->SetPosition({ 25.0f, 0.0f, 15.0f });
+	truckRObj[1]->SetPosition({ 0.0f, 0.0f, 15.0f });
+
 	//groundObj->SetPosition({0.0f, -2.5f, 0.0f});
 
 	//サウンド再生
-	//audio->PlayWave("Resources/Alarm01.wav");
+	//audio->PlayWave("Resources/DL.wav");
 }
 
 void GameScene::Update() {
@@ -276,28 +307,19 @@ void GameScene::Update() {
 	//largeCarObj->SetPosition(largeCarPos);
 	// 
 	//警告
-	if (input->TriggerKey(DIK_1))
-	{
-		isWarning[0] = 1;
-		isWarning[1] = 1;
-		isWarning[2] = 1;
-		isWarning[3] = 1;
-		isWarning[4] = 1;
-		isWarning[5] = 1;
+	if (input->TriggerKey(DIK_1)) 	{
+		for (int i = 0; i < 6; i++) {
+			isWarning[i] = true;
+		}
 	}
-	else if (input->TriggerKey(DIK_2))
-	{
-		isWarning[0] = 0;
-		isWarning[1] = 0;
-		isWarning[2] = 0;
-		isWarning[3] = 0;
-		isWarning[4] = 0;
-		isWarning[5] = 0;
+	else if (input->TriggerKey(DIK_2)) 	{
+		for (int i = 0; i < 6; i++) {
+			isWarning[i] = false;
+		}
 	}
 
 	//警告点滅
-	for (int i = 0; i < 6; i++)
-	{
+	for (int i = 0; i < 6; i++) 	{
 		if (isWarning[i] == 1) {
 			blinking[i]++;
 		}
@@ -313,9 +335,15 @@ void GameScene::Update() {
 	playerJump2Obj->Update();
 	skydomeObj->Update();
 	groundObj->Update();
-	largeCarObj->Update();
-	miniCarObj->Update();
-	truckObj->Update();
+
+	for (int i = 0; i < 2; i++) {
+		largeCarObj[i]->Update();
+		miniCarObj[i]->Update();
+		truckObj[i]->Update();
+		largeCarRObj[i]->Update();
+		miniCarRObj[i]->Update();
+		truckRObj[i]->Update();
+	}
 }
 
 void GameScene::Draw() {
@@ -351,9 +379,15 @@ void GameScene::Draw() {
 
 	skydomeObj->Draw();
 	groundObj->Draw();
-	largeCarObj->Draw();
-	miniCarObj->Draw();
-	truckObj->Draw();
+
+	for (int i = 0; i < 2; i++) {
+		largeCarObj[i]->Draw();
+		miniCarObj[i]->Draw();
+		truckObj[i]->Draw();
+		largeCarRObj[i]->Draw();
+		miniCarRObj[i]->Draw();
+		truckRObj[i]->Draw();
+	}
 	// 3Dオブジェクト描画後処理
 	Object3d::PostDraw();
 #pragma endregion 3Dオブジェクト描画
