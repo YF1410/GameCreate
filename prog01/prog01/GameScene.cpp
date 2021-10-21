@@ -6,13 +6,18 @@ GameScene::GameScene() {
 }
 
 GameScene::~GameScene() {
+
 	safe_delete(playerModel);
+	safe_delete(playerJump1Model);
+	safe_delete(playerJump2Model);
 	safe_delete(skydomeModel);
 	safe_delete(groundModel);
 	safe_delete(largeCarModel);
 	safe_delete(miniCarModel);
 	safe_delete(truckModel);
 	safe_delete(playerObj);
+	safe_delete(playerJump1Obj);
+	safe_delete(playerJump2Obj);
 	safe_delete(skydomeObj);
 	safe_delete(groundObj);
 	safe_delete(largeCarObj);
@@ -41,6 +46,8 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio) 
 
 	//.objの名前を指定してモデルを読み込む
 	playerModel = playerModel->CreateFromObject("player");
+	playerJump1Model = playerJump1Model->CreateFromObject("playerJump1");
+	playerJump2Model = playerJump2Model->CreateFromObject("playerJump2");
 	skydomeModel = skydomeModel->CreateFromObject("skydome");
 	groundModel = groundModel->CreateFromObject("ground");
 	largeCarModel = largeCarModel->CreateFromObject("largeCar");
@@ -48,6 +55,8 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio) 
 	truckModel = truckModel->CreateFromObject("truck");
 	// 3Dオブジェクト生成
 	playerObj = Object3d::Create();
+	playerJump1Obj = Object3d::Create();
+	playerJump2Obj = Object3d::Create();
 	skydomeObj = Object3d::Create();
 	groundObj = Object3d::Create();
 	largeCarObj = Object3d::Create();
@@ -55,6 +64,8 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio) 
 	truckObj = Object3d::Create();
 	// 3Dオブジェクトにモデルを割り当てる
 	playerObj->SetModel(playerModel);
+	playerJump1Obj->SetModel(playerJump1Model);
+	playerJump2Obj->SetModel(playerJump2Model);
 	skydomeObj->SetModel(skydomeModel);
 	groundObj->SetModel(groundModel);
 	largeCarObj->SetModel(largeCarModel);
@@ -62,24 +73,30 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio) 
 	truckObj->SetModel(truckModel);
 
 	playerObj->SetPosition({ 0.0f, 0.0f, -35.0f });
-	float playerScale = 1.0f;
 	playerObj->SetScale({ playerScale,playerScale,playerScale });
-	float groundScale = 15.0f;
+	playerJump1Obj->SetPosition(playerObj->GetPosition());
+	playerJump1Obj->SetScale(playerObj->GetScale());
+	playerJump2Obj->SetPosition(playerObj->GetPosition());
+	playerJump2Obj->SetScale(playerObj->GetScale());
+
 	groundObj->SetScale({ groundScale,groundScale, groundScale });
 
-	float carScale = 3.0f;
-	largeCarObj->SetScale({ carScale,carScale,carScale });
-	miniCarObj->SetScale({ carScale,carScale,carScale });
-	truckObj->SetScale({ carScale,carScale,carScale });
+	largeCarObj->SetScale({ largeCarScale,largeCarScale,largeCarScale });
+	miniCarObj->SetScale({ miniCarScale,miniCarScale,miniCarScale });
+	truckObj->SetScale({ truckScale,truckScale,truckScale });
+
+	largeCarObj->SetPosition({ 0.0f, 0.0f, -10.0f });
+	miniCarObj->SetPosition({ 0.0f, 0.0f, -20.0f });
+	truckObj->SetPosition({ 0.0f, 0.0f, 10.0f });
 	//groundObj->SetPosition({0.0f, -2.5f, 0.0f});
 
 	//サウンド再生
-	audio->PlayWave("Resources/Alarm01.wav");
+	//audio->PlayWave("Resources/Alarm01.wav");
 }
 
 void GameScene::Update() {
 	//キーが押されているときの処理
-	if (input->TriggerKey(DIK_0)) 	{
+	if (input->TriggerKey(DIK_0)) {
 		OutputDebugStringA("Hit 0\n");
 	}
 
@@ -88,35 +105,36 @@ void GameScene::Update() {
 	//X座標、Y座標、縮尺を指定して表示
 	debugText.Print("Nihon Kogakuin", 200, 200, 2.0f);
 
-	// オブジェクト移動
-	if (input->PushKey(DIK_UP) || input->PushKey(DIK_DOWN) || input->PushKey(DIK_RIGHT) || input->PushKey(DIK_LEFT)) 	{
-		// 現在の座標を取得
-		XMFLOAT3 playerPos = playerObj->GetPosition();
-		XMFLOAT3 skydomePos = skydomeObj->GetPosition();
-		XMFLOAT3 cameraEye = Object3d::GetEye();
-		XMFLOAT3 cameraTarget = Object3d::GetTarget();
+	// 現在の座標を取得
+	XMFLOAT3 playerPos = playerObj->GetPosition();
+	XMFLOAT3 skydomePos = skydomeObj->GetPosition();
+	XMFLOAT3 groundPos = groundObj->GetPosition();
+	XMFLOAT3 cameraEye = Object3d::GetEye();
+	XMFLOAT3 cameraTarget = Object3d::GetTarget();
 
+	// オブジェクト移動
+	if (input->PushKey(DIK_UP) || input->PushKey(DIK_DOWN) || input->PushKey(DIK_RIGHT) || input->PushKey(DIK_LEFT)) {
 		// 移動後の座標を計算
-		if (input->PushKey(DIK_UP)) 		{
+		if (input->PushKey(DIK_UP)) {
 			playerPos.z += zMove;
 			skydomePos.z += zMove;
 			cameraEye.z += zMove;
 			cameraTarget.z += zMove;
 		}
-		else if (input->PushKey(DIK_DOWN)) 		{
+		else if (input->PushKey(DIK_DOWN)) {
 			playerPos.z -= zMove;
 			skydomePos.z -= zMove;
 			cameraEye.z -= zMove;
 			cameraTarget.z -= zMove;
 		}
 
-		if (input->PushKey(DIK_RIGHT)) 		{
+		if (input->PushKey(DIK_RIGHT)) {
 			playerPos.x += zMove;
 			skydomePos.x += zMove;
 			cameraEye.x += zMove;
 			cameraTarget.x += zMove;
 		}
-		else if (input->PushKey(DIK_LEFT)) 		{
+		else if (input->PushKey(DIK_LEFT)) {
 			playerPos.x -= zMove;
 			skydomePos.x -= zMove;
 			cameraEye.x -= zMove;
@@ -125,26 +143,28 @@ void GameScene::Update() {
 
 		// 座標の変更を反映
 		playerObj->SetPosition(playerPos);
+		playerJump1Obj->SetPosition(playerPos);
+		playerJump2Obj->SetPosition(playerPos);
 		skydomeObj->SetPosition(skydomePos);
 		Object3d::SetEye(cameraEye);
 		Object3d::SetTarget(cameraTarget);
 	}
 
 	// カメラ移動
-	if (input->PushKey(DIK_W) || input->PushKey(DIK_S) || input->PushKey(DIK_D) || input->PushKey(DIK_A)) 	{
-		if (input->PushKey(DIK_W)) 		{
+	if (input->PushKey(DIK_W) || input->PushKey(DIK_S) || input->PushKey(DIK_D) || input->PushKey(DIK_A)) {
+		if (input->PushKey(DIK_W)) {
 			Object3d::CameraMoveVector({ 0.0f,+1.0f,0.0f });
 			//scroll += 10.0f;
 		}
-		else if (input->PushKey(DIK_S)) 		{
+		else if (input->PushKey(DIK_S)) {
 			Object3d::CameraMoveVector({ 0.0f,-1.0f,0.0f });
 			//scroll -= 10.0f;
 		}
 
-		if (input->PushKey(DIK_D)) 		{
+		if (input->PushKey(DIK_D)) {
 			Object3d::CameraMoveEyeVector({ +1.0f,0.0f,0.0f });
 		}
-		else if (input->PushKey(DIK_A)) 		{
+		else if (input->PushKey(DIK_A)) {
 			Object3d::CameraMoveEyeVector({ -1.0f,0.0f,0.0f });
 		}
 	}
@@ -154,12 +174,6 @@ void GameScene::Update() {
 	}
 
 	if (isJumpUp == true) {
-		// 現在の座標を取得
-		XMFLOAT3 playerPos = playerObj->GetPosition();
-		XMFLOAT3 skydomePos = skydomeObj->GetPosition();
-		XMFLOAT3 cameraEye = Object3d::GetEye();
-		XMFLOAT3 cameraTarget = Object3d::GetTarget();
-
 		// 移動後の座標を計算
 		playerPos.z += zMove;
 		playerPos.y += yMove;
@@ -170,6 +184,8 @@ void GameScene::Update() {
 
 		// 座標の変更を反映
 		playerObj->SetPosition(playerPos);
+		playerJump1Obj->SetPosition(playerPos);
+		playerJump2Obj->SetPosition(playerPos);
 		skydomeObj->SetPosition(skydomePos);
 		Object3d::SetEye(cameraEye);
 		Object3d::SetTarget(cameraTarget);
@@ -181,12 +197,6 @@ void GameScene::Update() {
 	}
 
 	if (isJumpDown == true) {
-		// 現在の座標を取得
-		XMFLOAT3 playerPos = playerObj->GetPosition();
-		XMFLOAT3 skydomePos = skydomeObj->GetPosition();
-		XMFLOAT3 cameraEye = Object3d::GetEye();
-		XMFLOAT3 cameraTarget = Object3d::GetTarget();
-
 		// 移動後の座標を計算
 		playerPos.z += zMove;
 		playerPos.y -= yMove;
@@ -196,29 +206,40 @@ void GameScene::Update() {
 
 		// 座標の変更を反映
 		playerObj->SetPosition(playerPos);
+		playerJump1Obj->SetPosition(playerPos);
+		playerJump2Obj->SetPosition(playerPos);
 		skydomeObj->SetPosition(skydomePos);
 		Object3d::SetEye(cameraEye);
 		Object3d::SetTarget(cameraTarget);
 
 		if (playerPos.y <= 0.0f) {
 			isJumpDown = false;
+			playerPos.y = 0;
 			count++;
+			if (isLeftLeg == true) {
+				isLeftLeg = false;
+				isRightLeg = true;
+			}
+			else if (isRightLeg == true) {
+				isLeftLeg = true;
+				isRightLeg = false;
+			}
 		}
 	}
 
 	if (count >= 3) {
-		XMFLOAT3 groundPos = groundObj->GetPosition();
-		XMFLOAT3 playerPos = playerObj->GetPosition();
 		groundPos.z = playerPos.z + 35.0f;
 		groundObj->SetPosition(groundPos);
 		count = 0;
 	}
 
-	XMFLOAT3 largeCarPos = largeCarObj->GetPosition();
-	largeCarPos.x += 1.0f;
-	largeCarObj->SetPosition(largeCarPos);
+	//XMFLOAT3 largeCarPos = largeCarObj->GetPosition();
+	//largeCarPos.x += 1.0f;
+	//largeCarObj->SetPosition(largeCarPos);
 
 	playerObj->Update();
+	playerJump1Obj->Update();
+	playerJump2Obj->Update();
 	skydomeObj->Update();
 	groundObj->Update();
 	largeCarObj->Update();
@@ -229,6 +250,7 @@ void GameScene::Update() {
 void GameScene::Draw() {
 	// コマンドリストの取得
 	ID3D12GraphicsCommandList* cmdList = dxCommon->GetCommandList();
+	XMFLOAT3 playerPos = playerObj->GetPosition();
 #pragma region 背景スプライト描画
 	// 背景スプライト描画前処理
 	Sprite::PreDraw(dxCommon->GetCommandList());
@@ -243,11 +265,23 @@ void GameScene::Draw() {
 	// 3Dオブジェクト描画前処理
 	Object3d::PreDraw(dxCommon->GetCommandList());
 	// 3Dオブクジェクトの描画
-	playerObj->Draw();
+	if (playerPos.y <= 0) {
+		playerObj->Draw();
+	}
+
+	if (isJumpUp || isJumpDown) {
+		if (isLeftLeg == true) {
+			playerJump1Obj->Draw();
+		}
+		else if (isRightLeg == true) {
+			playerJump2Obj->Draw();
+		}
+	}
+
 	skydomeObj->Draw();
 	groundObj->Draw();
 	largeCarObj->Draw();
-	//miniCarObj->Draw();
+	miniCarObj->Draw();
 	truckObj->Draw();
 	// 3Dオブジェクト描画後処理
 	Object3d::PostDraw();

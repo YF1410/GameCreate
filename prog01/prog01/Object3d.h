@@ -84,12 +84,18 @@ public: // メンバ関数
 	void Update();
 	// 描画
 	void Draw();
+	// モデルスケールの取得
+	const XMFLOAT3& GetScale() { return scale; }
+	// モデルスケールの設定
+	void SetScale(XMFLOAT3 scale) { this->scale = scale; }
+	// 回転角の取得
+	const XMFLOAT3& GetRotation() { return rotation; }
+	// 回転角の設定
+	void SetRotation(XMFLOAT3 rotation) { this->rotation = rotation; }
 	// 座標の取得
 	const XMFLOAT3& GetPosition() { return position; }
 	// 座標の設定
 	void SetPosition(XMFLOAT3 position) { this->position = position; }
-	// モデルスケールの設定
-	void SetScale(XMFLOAT3 scale) { this->scale = scale; }
 	// モデルの設定
 	void SetModel(Model* model) { this->model = model; };
 
