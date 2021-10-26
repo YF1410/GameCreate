@@ -2,7 +2,7 @@
 
 newmtl palette
 illum 1
-Ka 0.700 0.700 0.700
+Ka 1.000 1.000 1.000
 Kd 1.000 1.000 1.000
 Ks 0.000 0.000 0.000
-map_Kd playerJump1.png
+map_Kd largeCarL.png
