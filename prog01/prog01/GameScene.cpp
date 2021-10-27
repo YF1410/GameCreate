@@ -365,7 +365,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio) 
 	playerJumpLObj->SetPosition(playerObj->GetPosition());
 	playerJumpLObj->SetScale(playerObj->GetScale());
 
-	skydomeObj->SetPosition({0.0f,0.0f,-1000.0f});
+	skydomeObj->SetPosition({ 0.0f,0.0f,-1000.0f });
 
 	groundObj->SetScale({ groundScale,groundScale, groundScale });
 
@@ -396,16 +396,6 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio) 
 }
 
 void GameScene::Update() {
-	//キーが押されているときの処理
-	if (input->TriggerKey(DIK_0)) {
-		OutputDebugStringA("Hit 0\n");
-	}
-
-	//X座標、Y座標を指定して表示
-	//debugText.Print("Hello,DirectX!!", 200, 100, 1.0f);
-	//X座標、Y座標、縮尺を指定して表示
-	//debugText.Print("Nihon Kogakuin", 200, 200, 2.0f);
-
 	// 現在の座標を取得
 	XMFLOAT3 playerPos = playerObj->GetPosition();
 	XMFLOAT3 skydomePos = skydomeObj->GetPosition();
@@ -419,11 +409,6 @@ void GameScene::Update() {
 	XMFLOAT3 activeLargeCarLPos = largeCarLObj[activeCarNum]->GetPosition();
 	XMFLOAT3 activeMiniCarLPos = miniCarLObj[activeCarNum]->GetPosition();
 	XMFLOAT3 activeTruckLPos = truckLObj[activeCarNum]->GetPosition();
-
-	//largeCarPos.x += 1.0f;
-	//largeCarObj->SetPosition(largeCarPos);
-
-
 
 	if (nowScene == 0) {
 		if (input->TriggerKey(DIK_SPACE)) {
@@ -476,71 +461,6 @@ void GameScene::Update() {
 			soundCount = -10;
 		}
 		soundCount++;
-
-		if (input->TriggerKey(DIK_K)) {
-			nowScene = 2;
-			//当たり判定の中に入れるやつ
-			playAudio->Stop();
-			soundCount = 0;
-			deadAudio->PlayWave("Resources/Dead.wav");
-
-			dangerAudio->PlayWave("Resources/Danger.wav");
-			carAudio->PlayWave("Resources/Car.wav");
-		}
-		// オブジェクト移動
-		if (input->PushKey(DIK_UP) || input->PushKey(DIK_DOWN) || input->PushKey(DIK_RIGHT) || input->PushKey(DIK_LEFT)) {
-			// 移動後の座標を計算
-			if (input->PushKey(DIK_UP)) {
-				playerPos.z += zMove;
-				skydomePos.z += zMove;
-				cameraEye.z += zMove;
-				cameraTarget.z += zMove;
-			}
-			else if (input->PushKey(DIK_DOWN)) {
-				playerPos.z -= zMove;
-				skydomePos.z -= zMove;
-				cameraEye.z -= zMove;
-				cameraTarget.z -= zMove;
-			}
-
-			if (input->PushKey(DIK_RIGHT)) {
-				playerPos.x += zMove;
-				skydomePos.x += zMove;
-				cameraEye.x += zMove;
-				cameraTarget.x += zMove;
-			}
-			else if (input->PushKey(DIK_LEFT)) {
-				playerPos.x -= zMove;
-				skydomePos.x -= zMove;
-				cameraEye.x -= zMove;
-				cameraTarget.x -= zMove;
-			}
-
-			// 座標の変更を反映
-			playerObj->SetPosition(playerPos);
-			playerJumpLObj->SetPosition(playerPos);
-			playerJumpRObj->SetPosition(playerPos);
-			skydomeObj->SetPosition(skydomePos);
-			Object3d::SetEye(cameraEye);
-			Object3d::SetTarget(cameraTarget);
-		}
-
-		// カメラ移動
-		if (input->PushKey(DIK_W) || input->PushKey(DIK_S) || input->PushKey(DIK_D) || input->PushKey(DIK_A)) {
-			if (input->PushKey(DIK_W)) {
-				Object3d::CameraMoveVector({ 0.0f,+1.0f,0.0f });
-			}
-			else if (input->PushKey(DIK_S)) {
-				Object3d::CameraMoveVector({ 0.0f,-1.0f,0.0f });
-			}
-
-			if (input->PushKey(DIK_D)) {
-				Object3d::CameraMoveEyeVector({ +1.0f,0.0f,0.0f });
-			}
-			else if (input->PushKey(DIK_A)) {
-				Object3d::CameraMoveEyeVector({ -1.0f,0.0f,0.0f });
-			}
-		}
 
 		if (input->TriggerKey(DIK_SPACE) && !isJumpUp && !isJumpDown) {
 			isJumpUp = true;
@@ -618,24 +538,6 @@ void GameScene::Update() {
 		if (scoreCountTen == 10) {
 			scoreCountHundred++;
 			scoreCountTen = 0;
-		}
-
-		//警告
-		if (input->TriggerKey(DIK_1)) {
-			isRightWarning = true;
-			isLeftWarning = true;
-		}
-		else if (input->TriggerKey(DIK_2)) {
-			isRightWarning = true;
-			isLeftWarning = false;
-		}
-		else if (input->TriggerKey(DIK_3)) {
-			isRightWarning = false;
-			isLeftWarning = true;
-		}
-		else if (input->TriggerKey(DIK_4)) {
-			isRightWarning = false;
-			isLeftWarning = false;
 		}
 
 		//警告点滅
