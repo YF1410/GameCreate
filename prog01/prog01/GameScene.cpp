@@ -365,6 +365,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio) 
 	playerJumpLObj->SetPosition(playerObj->GetPosition());
 	playerJumpLObj->SetScale(playerObj->GetScale());
 
+	groundObj->SetPosition({ 0.0f,0.0f,-1000.0f });
 	groundObj->SetScale({ groundScale,groundScale, groundScale });
 
 	for (int i = 0; i < 2; i++) {
@@ -548,7 +549,6 @@ void GameScene::Update() {
 			// 移動後の座標を計算
 			playerPos.z += zMove;
 			playerPos.y += yMove;
-			skydomePos.z += zMove;
 			cameraEye.z += zMove;
 			cameraTarget.z += zMove;
 
@@ -556,7 +556,6 @@ void GameScene::Update() {
 			playerObj->SetPosition(playerPos);
 			playerJumpLObj->SetPosition(playerPos);
 			playerJumpRObj->SetPosition(playerPos);
-			skydomeObj->SetPosition(skydomePos);
 			Object3d::SetEye(cameraEye);
 			Object3d::SetTarget(cameraTarget);
 
@@ -570,7 +569,6 @@ void GameScene::Update() {
 			// 移動後の座標を計算
 			playerPos.z += zMove;
 			playerPos.y -= yMove;
-			skydomePos.z += zMove;
 			cameraEye.z += zMove;
 			cameraTarget.z += zMove;
 
@@ -578,7 +576,6 @@ void GameScene::Update() {
 			playerObj->SetPosition(playerPos);
 			playerJumpLObj->SetPosition(playerPos);
 			playerJumpRObj->SetPosition(playerPos);
-			skydomeObj->SetPosition(skydomePos);
 			Object3d::SetEye(cameraEye);
 			Object3d::SetTarget(cameraTarget);
 
@@ -914,7 +911,9 @@ void GameScene::Update() {
 		}
 		soundCount++;
 
-		cameraTarget.y = 35;
+		cameraEye.y = -3.0f;
+		cameraEye.z = -300.0f;
+		cameraTarget.y = 200.0f;
 		Object3d::SetEye(cameraEye);
 		Object3d::SetTarget(cameraTarget);
 		if (input->TriggerKey(DIK_SPACE)) {
