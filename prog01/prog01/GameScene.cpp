@@ -851,12 +851,12 @@ void GameScene::ScrollCarPos(int activeCarNum) {
 	XMFLOAT3 activeMiniCarLPos = miniCarLObj[activeCarNum]->GetPosition();
 	XMFLOAT3 activeTruckLPos = truckLObj[activeCarNum]->GetPosition();
 
-	activeLargeCarRPos.x = 100.0f;
-	activeMiniCarRPos.x = 100.0f;
-	activeTruckRPos.x = 100.0f;
-	activeLargeCarLPos.x = -100.0f;
-	activeMiniCarLPos.x = -100.0f;
-	activeTruckLPos.x = -100.0f;
+	activeLargeCarRPos.x = 40.0f;
+	activeMiniCarRPos.x = 40.0f;
+	activeTruckRPos.x = 40.0f;
+	activeLargeCarLPos.x = -40.0f;
+	activeMiniCarLPos.x = -40.0f;
+	activeTruckLPos.x = -40.0f;
 
 	if (activeCarNum == 0) {
 		activeLargeCarRPos.z = -25.0f + (scrollCar * scrollCount);
