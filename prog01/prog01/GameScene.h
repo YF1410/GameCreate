@@ -12,6 +12,8 @@
 #include "stdlib.h"
 #include "time.h"
 
+using namespace DirectX;
+
 class GameScene {
 private: // エイリアス
 // Microsoft::WRL::を省略
@@ -124,7 +126,7 @@ private: // メンバ変数
 	float largeCarScale = 3.0f;
 	float miniCarScale = 2.6f;
 	float truckScale = 3.0f;
-	float carMove = 2.5f;
+	float carMove = 3.0f;
 	int carTypeR = 0;
 	int carTypeL = 0;
 	int activeCarNum = 0;

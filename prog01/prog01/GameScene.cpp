@@ -376,21 +376,21 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio) 
 		truckLObj[i]->SetScale({ truckScale,truckScale,truckScale });
 	}
 
-	largeCarRObj[0]->SetPosition({ 40.0f, 0.0f, -25.0f });
-	miniCarRObj[0]->SetPosition({ 40.0f, 0.0f, -25.0f });
-	truckRObj[0]->SetPosition({ 40.0f, 0.0f, -25.0f });
+	largeCarRObj[0]->SetPosition({ 45.0f, 0.0f, -25.0f });
+	miniCarRObj[0]->SetPosition({ 45.0f, 0.0f, -25.0f });
+	truckRObj[0]->SetPosition({ 45.0f, 0.0f, -25.0f });
 
-	largeCarLObj[0]->SetPosition({ -40.0f, 0.0f, -15.0f });
-	miniCarLObj[0]->SetPosition({ -40.0f, 0.0f, -15.0f });
-	truckLObj[0]->SetPosition({ -40.0f, 0.0f, -15.0f });
+	largeCarLObj[0]->SetPosition({ -45.0f, 0.0f, -15.0f });
+	miniCarLObj[0]->SetPosition({ -45.0f, 0.0f, -15.0f });
+	truckLObj[0]->SetPosition({ -45.0f, 0.0f, -15.0f });
 
-	largeCarRObj[1]->SetPosition({ 40.0f, 0.0f, 5.0f });
-	miniCarRObj[1]->SetPosition({ 40.0f, 0.0f, 5.0f });
-	truckRObj[1]->SetPosition({ 40.0f, 0.0f, 5.0f });
+	largeCarRObj[1]->SetPosition({ 45.0f, 0.0f, 5.0f });
+	miniCarRObj[1]->SetPosition({ 45.0f, 0.0f, 5.0f });
+	truckRObj[1]->SetPosition({ 45.0f, 0.0f, 5.0f });
 
-	largeCarLObj[1]->SetPosition({ -40.0f, 0.0f, 15.0f });
-	miniCarLObj[1]->SetPosition({ -40.0f, 0.0f, 15.0f });
-	truckLObj[1]->SetPosition({ -40.0f, 0.0f, 15.0f });
+	largeCarLObj[1]->SetPosition({ -45.0f, 0.0f, 15.0f });
+	miniCarLObj[1]->SetPosition({ -45.0f, 0.0f, 15.0f });
+	truckLObj[1]->SetPosition({ -45.0f, 0.0f, 15.0f });
 }
 
 void GameScene::Update() {
@@ -423,15 +423,15 @@ void GameScene::Update() {
 
 
 
-	if (nowScene == 0) 	{
-		if (input->TriggerKey(DIK_SPACE)) 		{
+	if (nowScene == 0) {
+		if (input->TriggerKey(DIK_SPACE)) {
 			isChange = 1;
 
 			Object3d::SetEye(cameraEye);
 			Object3d::SetTarget(cameraTarget);
 		}
 
-		if (isChange == true) 		{
+		if (isChange == true) {
 			nowTime += 0.01;
 			timeRate = min(nowTime / endTime, 1);
 
@@ -443,17 +443,17 @@ void GameScene::Update() {
 		}
 
 
-		if (soundCount == 0) 		{
+		if (soundCount == 0) {
 			//サウンド再生
 			titleAudio->PlayWave("Resources/Title.wav");
 		}
-		else if (soundCount > 5400) 		{
+		else if (soundCount > 5400) {
 			soundCount = 0;
 		}
 		soundCount++;
-		if (timeRate == 1) 		{
-			warningRWaitTime = rand() % 50;
-			warningLWaitTime = rand() % 40;
+		if (timeRate == 1) {
+			warningRWaitTime = rand() % 30;
+			warningLWaitTime = rand() % 29;
 			isWarningRWait = true;
 			isWarningLWait = true;
 			nowScene = 1;
@@ -464,18 +464,18 @@ void GameScene::Update() {
 			titleAudio->Stop();
 		}
 	}
-	else if (nowScene == 1) 	{
+	else if (nowScene == 1) {
 
-		if (soundCount == 0) 		{
+		if (soundCount == 0) {
 			//サウンド再生
 			playAudio->PlayWave("Resources/Play.wav");
 		}
-		else if (soundCount > 4800) 		{
+		else if (soundCount > 4800) {
 			soundCount = -10;
 		}
 		soundCount++;
 
-		if (input->TriggerKey(DIK_K)) 		{
+		if (input->TriggerKey(DIK_K)) {
 			nowScene = 2;
 			//当たり判定の中に入れるやつ
 			playAudio->Stop();
@@ -674,7 +674,6 @@ void GameScene::Update() {
 		}
 
 		if (isRunCarR == true) {
-
 			if (carTypeR == 0) {
 				activeLargeCarRPos.x -= carMove;
 				largeCarRObj[activeCarNum]->SetPosition(activeLargeCarRPos);
@@ -704,26 +703,164 @@ void GameScene::Update() {
 			}
 		}
 
-		if (activeLargeCarRPos.x <= -40.0f || activeMiniCarRPos.x <= -40.0f || activeTruckRPos.x <= -40.0f) {
+		XMFLOAT3 playerPosition = playerObj->GetPosition();
+
+		for (int i = 0; i < _countof(largeCarRObj); i++) {
+			if (isRunCarR == true) {
+				XMFLOAT3 carRObj = largeCarRObj[i]->GetPosition();
+
+				XMVECTOR position_sub = XMVectorSet
+				(
+					carRObj.x - playerPosition.x,
+					carRObj.y - playerPosition.y,
+					carRObj.z - playerPosition.z,
+					0
+				);
+
+				position_sub = XMVector3Length(position_sub);
+
+				float distance = position_sub.m128_f32[2];
+
+				if (distance <= 1 * 3) {
+					carRObj.x = 45.0f;
+					largeCarRObj[i]->SetPosition(carRObj);
+					nowScene = 2;
+				}
+			}
+		}
+		for (int i = 0; i < _countof(largeCarLObj); i++) {
+			if (isRunCarL == true) {
+				XMFLOAT3 carLObj = largeCarLObj[i]->GetPosition();
+
+				XMVECTOR position_sub = XMVectorSet
+				(
+					carLObj.x - playerPosition.x,
+					carLObj.y - playerPosition.y,
+					carLObj.z - playerPosition.z,
+					0
+				);
+
+				position_sub = XMVector3Length(position_sub);
+
+				float distance = position_sub.m128_f32[2];
+
+				if (distance <= 1 * 3) {
+					nowScene = 2;
+				}
+			}
+		}
+
+		for (int i = 0; i < _countof(miniCarRObj); i++) {
+			if (isRunCarR == true) {
+				XMFLOAT3 carRObj = miniCarRObj[i]->GetPosition();
+
+				XMVECTOR position_sub = XMVectorSet
+				(
+					carRObj.x - playerPosition.x,
+					carRObj.y - playerPosition.y,
+					carRObj.z - playerPosition.z,
+					0
+				);
+
+				position_sub = XMVector3Length(position_sub);
+
+				float distance = position_sub.m128_f32[2];
+
+				if (distance <= 1 * 3) {
+					carRObj.x = 45.0f;
+					miniCarRObj[i]->SetPosition(carRObj);
+					nowScene = 2;
+				}
+			}
+		}
+		for (int i = 0; i < _countof(miniCarLObj); i++) {
+			if (isRunCarL == true) {
+				XMFLOAT3 carLObj = miniCarLObj[i]->GetPosition();
+
+				XMVECTOR position_sub = XMVectorSet
+				(
+					carLObj.x - playerPosition.x,
+					carLObj.y - playerPosition.y,
+					carLObj.z - playerPosition.z,
+					0
+				);
+
+				position_sub = XMVector3Length(position_sub);
+
+				float distance = position_sub.m128_f32[2];
+
+				if (distance <= 1 * 2) {
+					nowScene = 2;
+				}
+			}
+		}
+
+		for (int i = 0; i < _countof(truckRObj); i++) {
+			if (isRunCarR == true) {
+				XMFLOAT3 carRObj = truckRObj[i]->GetPosition();
+
+				XMVECTOR position_sub = XMVectorSet
+				(
+					carRObj.x - playerPosition.x,
+					carRObj.y - playerPosition.y,
+					carRObj.z - playerPosition.z,
+					0
+				);
+
+				position_sub = XMVector3Length(position_sub);
+
+				float distance = position_sub.m128_f32[0];
+
+				if (distance <= 1 * 4) {
+					carRObj.x = 45.0f;
+					truckRObj[i]->SetPosition(carRObj);
+					nowScene = 2;
+				}
+			}
+		}
+		for (int i = 0; i < _countof(truckLObj); i++) {
+			if (isRunCarL == true) {
+				XMFLOAT3 carRObj = truckLObj[i]->GetPosition();
+
+				XMVECTOR position_sub = XMVectorSet
+				(
+					carRObj.x - playerPosition.x,
+					carRObj.y - playerPosition.y,
+					carRObj.z - playerPosition.z,
+					0
+				);
+
+				position_sub = XMVector3Length(position_sub);
+
+				float distance = position_sub.m128_f32[0];
+
+				if (distance <= 1 * 4) {
+					nowScene = 2;
+				}
+			}
+		}
+
+
+		if (activeLargeCarRPos.x <= -45.0f || activeMiniCarRPos.x <= -45.0f || activeTruckRPos.x <= -45.0f) {
 			blinkRCount = 0;
 			isRunCarR = false;
 
 			if (carTypeR == 0) {
-				activeLargeCarRPos.x = 40.0f;
+				activeLargeCarRPos.x = 45.0f;
 				largeCarRObj[activeCarNum]->SetPosition(activeLargeCarRPos);
 			}
 			if (carTypeR == 1) {
-				activeMiniCarRPos.x = 40.0f;
+				activeMiniCarRPos.x = 45.0f;
 				miniCarRObj[activeCarNum]->SetPosition(activeMiniCarRPos);
 			}
 			if (carTypeR == 2) {
-				activeTruckRPos.x = 40.0f;
+				activeTruckRPos.x = 45.0f;
 				truckRObj[activeCarNum]->SetPosition(activeTruckRPos);
 			}
 
 			srand(time(NULL));
 			carTypeR = rand() % 3;
-			warningRWaitTime = rand() % 50;
+			warningRWaitTime = rand() % 30;
 			isWarningRWait = true;
 		}
 
@@ -735,26 +872,26 @@ void GameScene::Update() {
 			}
 		}
 
-		if (activeLargeCarLPos.x >= +40.0f || activeMiniCarLPos.x >= +40.0f || activeTruckLPos.x >= +40.0f) {
+		if (activeLargeCarLPos.x >= +45.0f || activeMiniCarLPos.x >= +45.0f || activeTruckLPos.x >= +45.0f) {
 			blinkLCount = 0;
 			isRunCarL = false;
 
 			if (carTypeL == 0) {
-				activeLargeCarLPos.x = -40.0f;
+				activeLargeCarLPos.x = -45.0f;
 				largeCarLObj[activeCarNum]->SetPosition(activeLargeCarLPos);
 			}
 			if (carTypeL == 1) {
-				activeMiniCarLPos.x = -40.0f;
+				activeMiniCarLPos.x = -45.0f;
 				miniCarLObj[activeCarNum]->SetPosition(activeMiniCarLPos);
 			}
 			if (carTypeL == 2) {
-				activeTruckLPos.x = -40.0f;
+				activeTruckLPos.x = -45.0f;
 				truckLObj[activeCarNum]->SetPosition(activeTruckLPos);
 			}
 
 			srand(time(NULL));
 			carTypeL = rand() % 3;
-			warningLWaitTime = rand() % 50;
+			warningLWaitTime = rand() % 29;
 			isWarningLWait = true;
 		}
 
@@ -766,13 +903,13 @@ void GameScene::Update() {
 			}
 		}
 	}
-	else if (nowScene == 2) 	{
+	else if (nowScene == 2) {
 
-		if (soundCount == 0) 		{
+		if (soundCount == 0) {
 			//サウンド再生
 			gameoverAudio->PlayWave("Resources/GameOver.wav");
 		}
-		else if (soundCount > 4800) 		{
+		else if (soundCount > 4800) {
 			soundCount = 0;
 		}
 		soundCount++;
@@ -780,18 +917,32 @@ void GameScene::Update() {
 		cameraTarget.y = 35;
 		Object3d::SetEye(cameraEye);
 		Object3d::SetTarget(cameraTarget);
-		if (input->TriggerKey(DIK_SPACE)) 	{
+		if (input->TriggerKey(DIK_SPACE)) {
 			nowScene = 3;
 		}
 	}
-	else if (nowScene == 3) 	{
+	else if (nowScene == 3) {
 		gameoverAudio->Stop();
 		count = 0;
 		soundCount = 0;
 		scoreCountOne = 0;
 		scoreCountTen = 0;
 		scoreCountHundred = 0;
-		scrollCount = 0;
+		scrollCount = 1;
+		activeCarNum = 0;
+		blinkingR = 0;
+		blinkingL = 0;
+		blinkRCount = 0;
+		blinkLCount = 0;
+		isWarningRWait = false;
+		isWarningLWait = false;
+		isRightWarning = false;
+		isLeftWarning = false;
+		isJumpUp = false;
+		isJumpDown = false;
+		isRightLeg = true;
+		isLeftLeg = false;
+		isChange = false;
 		cameraEye.x = 0;
 		cameraEye.y = 10.0f;
 		cameraEye.z = -40.0f;
@@ -825,21 +976,21 @@ void GameScene::resetPos() {
 
 	groundObj->SetPosition({ 0.0f, 0.0f, 0.0f });
 
-	largeCarRObj[0]->SetPosition({ 40.0f, 0.0f, -25.0f });
-	miniCarRObj[0]->SetPosition({ 40.0f, 0.0f, -25.0f });
-	truckRObj[0]->SetPosition({ 40.0f, 0.0f, -25.0f });
+	largeCarRObj[0]->SetPosition({ 45.0f, 0.0f, -25.0f });
+	miniCarRObj[0]->SetPosition({ 45.0f, 0.0f, -25.0f });
+	truckRObj[0]->SetPosition({ 45.0f, 0.0f, -25.0f });
 
-	largeCarLObj[0]->SetPosition({ -40.0f, 0.0f, -15.0f });
-	miniCarLObj[0]->SetPosition({ -40.0f, 0.0f, -15.0f });
-	truckLObj[0]->SetPosition({ -40.0f, 0.0f, -15.0f });
+	largeCarLObj[0]->SetPosition({ -45.0f, 0.0f, -15.0f });
+	miniCarLObj[0]->SetPosition({ -45.0f, 0.0f, -15.0f });
+	truckLObj[0]->SetPosition({ -45.0f, 0.0f, -15.0f });
 
-	largeCarRObj[1]->SetPosition({ 40.0f, 0.0f, 5.0f });
-	miniCarRObj[1]->SetPosition({ 40.0f, 0.0f, 5.0f });
-	truckRObj[1]->SetPosition({ 40.0f, 0.0f, 5.0f });
+	largeCarRObj[1]->SetPosition({ 45.0f, 0.0f, 5.0f });
+	miniCarRObj[1]->SetPosition({ 45.0f, 0.0f, 5.0f });
+	truckRObj[1]->SetPosition({ 45.0f, 0.0f, 5.0f });
 
-	largeCarLObj[1]->SetPosition({ -40.0f, 0.0f, 15.0f });
-	miniCarLObj[1]->SetPosition({ -40.0f, 0.0f, 15.0f });
-	truckLObj[1]->SetPosition({ -40.0f, 0.0f, 15.0f });
+	largeCarLObj[1]->SetPosition({ -45.0f, 0.0f, 15.0f });
+	miniCarLObj[1]->SetPosition({ -45.0f, 0.0f, 15.0f });
+	truckLObj[1]->SetPosition({ -45.0f, 0.0f, 15.0f });
 }
 
 void GameScene::ScrollCarPos(int activeCarNum) {
@@ -851,12 +1002,12 @@ void GameScene::ScrollCarPos(int activeCarNum) {
 	XMFLOAT3 activeMiniCarLPos = miniCarLObj[activeCarNum]->GetPosition();
 	XMFLOAT3 activeTruckLPos = truckLObj[activeCarNum]->GetPosition();
 
-	activeLargeCarRPos.x = 40.0f;
-	activeMiniCarRPos.x = 40.0f;
-	activeTruckRPos.x = 40.0f;
-	activeLargeCarLPos.x = -40.0f;
-	activeMiniCarLPos.x = -40.0f;
-	activeTruckLPos.x = -40.0f;
+	activeLargeCarRPos.x = 45.0f;
+	activeMiniCarRPos.x = 45.0f;
+	activeTruckRPos.x = 45.0f;
+	activeLargeCarLPos.x = -45.0f;
+	activeMiniCarLPos.x = -45.0f;
+	activeTruckLPos.x = -45.0f;
 
 	if (activeCarNum == 0) {
 		activeLargeCarRPos.z = -25.0f + (scrollCar * scrollCount);
@@ -934,13 +1085,13 @@ void GameScene::Draw() {
 	Sprite::PreDraw(dxCommon->GetCommandList());
 
 	// 前景スプライトの描画
-	if (nowScene == 0) 	{
-		if (timeRate == 0) 		{
+	if (nowScene == 0) {
+		if (timeRate == 0) {
 			title->Draw();
 		}
 	}
-	if (nowScene == 1 || nowScene == 2) 	{
-		if (nowScene == 1) 		{
+	if (nowScene == 1 || nowScene == 2) {
+		if (nowScene == 1) {
 			if (isLeftWarning == true && blinkingL <= 10) {
 				warningMarkLT->Draw();
 				warningMarkLM->Draw();
@@ -983,7 +1134,7 @@ void GameScene::Draw() {
 			noHundreds9->SetPosition({ 150.0f,810.0f });
 			uiBack->Draw();
 		}
-		else if (nowScene == 2) 		{
+		else if (nowScene == 2) {
 			gameOver->Draw();
 			noOnes0->SetPosition({ 794.0f,470.0f });
 			noOnes1->SetPosition({ 794.0f,470.0f });
@@ -1048,7 +1199,7 @@ void GameScene::Draw() {
 			noOnes9->Draw();
 		}
 		//10の位
-		if (scoreCountTen > 0 || scoreCountHundred > 0) 		{
+		if (scoreCountTen > 0 || scoreCountHundred > 0) {
 			if (scoreCountTen == 0) {
 				noTens0->Draw();
 			}
@@ -1081,7 +1232,7 @@ void GameScene::Draw() {
 			}
 		}
 		//100の位
-		if (scoreCountHundred > 0) 		{
+		if (scoreCountHundred > 0) {
 			if (scoreCountHundred == 0) {
 				noHundreds0->Draw();
 			}
