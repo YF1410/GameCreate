@@ -376,21 +376,21 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio) 
 		truckLObj[i]->SetScale({ truckScale,truckScale,truckScale });
 	}
 
-	largeCarRObj[0]->SetPosition({ 145.0f, 0.0f, -25.0f });
-	miniCarRObj[0]->SetPosition({ 145.0f, 0.0f, -25.0f });
-	truckRObj[0]->SetPosition({ 145.0f, 0.0f, -25.0f });
+	largeCarRObj[0]->SetPosition({ 40.0f, 0.0f, -25.0f });
+	miniCarRObj[0]->SetPosition({ 40.0f, 0.0f, -25.0f });
+	truckRObj[0]->SetPosition({ 40.0f, 0.0f, -25.0f });
 
-	largeCarLObj[0]->SetPosition({ -145.0f, 0.0f, -15.0f });
-	miniCarLObj[0]->SetPosition({ -145.0f, 0.0f, -15.0f });
-	truckLObj[0]->SetPosition({ -145.0f, 0.0f, -15.0f });
+	largeCarLObj[0]->SetPosition({ -40.0f, 0.0f, -15.0f });
+	miniCarLObj[0]->SetPosition({ -40.0f, 0.0f, -15.0f });
+	truckLObj[0]->SetPosition({ -40.0f, 0.0f, -15.0f });
 
-	largeCarRObj[1]->SetPosition({ 145.0f, 0.0f, 5.0f });
-	miniCarRObj[1]->SetPosition({ 145.0f, 0.0f, 5.0f });
-	truckRObj[1]->SetPosition({ 145.0f, 0.0f, 5.0f });
+	largeCarRObj[1]->SetPosition({ 40.0f, 0.0f, 5.0f });
+	miniCarRObj[1]->SetPosition({ 40.0f, 0.0f, 5.0f });
+	truckRObj[1]->SetPosition({ 40.0f, 0.0f, 5.0f });
 
-	largeCarLObj[1]->SetPosition({ -145.0f, 0.0f, 15.0f });
-	miniCarLObj[1]->SetPosition({ -145.0f, 0.0f, 15.0f });
-	truckLObj[1]->SetPosition({ -145.0f, 0.0f, 15.0f });
+	largeCarLObj[1]->SetPosition({ -40.0f, 0.0f, 15.0f });
+	miniCarLObj[1]->SetPosition({ -40.0f, 0.0f, 15.0f });
+	truckLObj[1]->SetPosition({ -40.0f, 0.0f, 15.0f });
 }
 
 void GameScene::Update() {
@@ -421,20 +421,17 @@ void GameScene::Update() {
 	//largeCarPos.x += 1.0f;
 	//largeCarObj->SetPosition(largeCarPos);
 
-	
 
-	if (nowScene == 0)
-	{
-		if (input->TriggerKey(DIK_SPACE))
-		{
+
+	if (nowScene == 0) 	{
+		if (input->TriggerKey(DIK_SPACE)) 		{
 			isChange = 1;
-			
+
 			Object3d::SetEye(cameraEye);
 			Object3d::SetTarget(cameraTarget);
 		}
 
-		if (isChange == 1)
-		{
+		if (isChange == true) 		{
 			nowTime += 0.01;
 			timeRate = min(nowTime / endTime, 1);
 
@@ -444,44 +441,41 @@ void GameScene::Update() {
 			Object3d::SetEye(cameraEye);
 			Object3d::SetTarget(cameraTarget);
 		}
-		
 
-		if (soundCount == 0)
-		{
+
+		if (soundCount == 0) 		{
 			//サウンド再生
 			titleAudio->PlayWave("Resources/Title.wav");
 		}
-		else if (soundCount > 5400)
-		{
+		else if (soundCount > 5400) 		{
 			soundCount = 0;
 		}
 		soundCount++;
-		if (timeRate == 1)
-		{
+		if (timeRate == 1) 		{
+			warningRWaitTime = rand() % 50;
+			warningLWaitTime = rand() % 40;
+			isWarningRWait = true;
+			isWarningLWait = true;
 			nowScene = 1;
 			soundCount = 0;
-			isChange = 0;
+			isChange = false;
 			nowTime = 0;
 			timeRate = 0;
 			titleAudio->Stop();
 		}
 	}
-	else if (nowScene == 1)
-	{
-		
-		if (soundCount == 0)
-		{
+	else if (nowScene == 1) 	{
+
+		if (soundCount == 0) 		{
 			//サウンド再生
 			playAudio->PlayWave("Resources/Play.wav");
 		}
-		else if (soundCount > 4800)
-		{
+		else if (soundCount > 4800) 		{
 			soundCount = -10;
 		}
 		soundCount++;
-		
-		if (input->TriggerKey(DIK_K))
-		{
+
+		if (input->TriggerKey(DIK_K)) 		{
 			nowScene = 2;
 			//当たり判定の中に入れるやつ
 			playAudio->Stop();
@@ -548,20 +542,6 @@ void GameScene::Update() {
 
 		if (input->TriggerKey(DIK_SPACE) && !isJumpUp && !isJumpDown) {
 			isJumpUp = true;
-			if (count == 0) {
-				walkCountOnesP++;
-			}
-		}
-
-		if (walkCountOnesP == 10)
-		{
-			walkCountTensP++;
-			walkCountOnesP = 0;
-		}
-		if (walkCountTensP == 10)
-		{
-			walkCountHundredsP++;
-			walkCountTensP = 0;
 		}
 
 		if (isJumpUp == true) {
@@ -621,7 +601,9 @@ void GameScene::Update() {
 			groundPos.z = playerPos.z + scrollGround;
 			groundObj->SetPosition(groundPos);
 			count = 0;
+			scoreCountOne++;
 			ScrollCarPos(activeCarNum);
+
 			if (activeCarNum == 0) {
 				activeCarNum = 1;
 			}
@@ -629,6 +611,15 @@ void GameScene::Update() {
 				activeCarNum = 0;
 				scrollCount++;
 			}
+		}
+
+		if (scoreCountOne == 10) {
+			scoreCountTen++;
+			scoreCountOne = 0;
+		}
+		if (scoreCountTen == 10) {
+			scoreCountHundred++;
+			scoreCountTen = 0;
 		}
 
 		//警告
@@ -653,7 +644,7 @@ void GameScene::Update() {
 
 		if (isRightWarning == true) {
 			blinkingR++;
-			
+
 		}
 		else if (isRightWarning == false) {
 			blinkingR = 0;
@@ -683,7 +674,7 @@ void GameScene::Update() {
 		}
 
 		if (isRunCarR == true) {
-			
+
 			if (carTypeR == 0) {
 				activeLargeCarRPos.x -= carMove;
 				largeCarRObj[activeCarNum]->SetPosition(activeLargeCarRPos);
@@ -713,20 +704,20 @@ void GameScene::Update() {
 			}
 		}
 
-		if (activeLargeCarRPos.x <= -150.0f || activeMiniCarRPos.x <= -150.0f || activeTruckRPos.x <= -150.0f) {
+		if (activeLargeCarRPos.x <= -40.0f || activeMiniCarRPos.x <= -40.0f || activeTruckRPos.x <= -40.0f) {
 			blinkRCount = 0;
 			isRunCarR = false;
 
 			if (carTypeR == 0) {
-				activeLargeCarRPos.x = 150.0f;
+				activeLargeCarRPos.x = 40.0f;
 				largeCarRObj[activeCarNum]->SetPosition(activeLargeCarRPos);
 			}
 			if (carTypeR == 1) {
-				activeMiniCarRPos.x = 150.0f;
+				activeMiniCarRPos.x = 40.0f;
 				miniCarRObj[activeCarNum]->SetPosition(activeMiniCarRPos);
 			}
 			if (carTypeR == 2) {
-				activeTruckRPos.x = 150.0f;
+				activeTruckRPos.x = 40.0f;
 				truckRObj[activeCarNum]->SetPosition(activeTruckRPos);
 			}
 
@@ -744,20 +735,20 @@ void GameScene::Update() {
 			}
 		}
 
-		if (activeLargeCarLPos.x >= +150.0f || activeMiniCarLPos.x >= +150.0f || activeTruckLPos.x >= +150.0f) {
+		if (activeLargeCarLPos.x >= +40.0f || activeMiniCarLPos.x >= +40.0f || activeTruckLPos.x >= +40.0f) {
 			blinkLCount = 0;
 			isRunCarL = false;
 
 			if (carTypeL == 0) {
-				activeLargeCarLPos.x = -150.0f;
+				activeLargeCarLPos.x = -40.0f;
 				largeCarLObj[activeCarNum]->SetPosition(activeLargeCarLPos);
 			}
 			if (carTypeL == 1) {
-				activeMiniCarLPos.x = -150.0f;
+				activeMiniCarLPos.x = -40.0f;
 				miniCarLObj[activeCarNum]->SetPosition(activeMiniCarLPos);
 			}
 			if (carTypeL == 2) {
-				activeTruckLPos.x = -150.0f;
+				activeTruckLPos.x = -40.0f;
 				truckLObj[activeCarNum]->SetPosition(activeTruckLPos);
 			}
 
@@ -775,41 +766,41 @@ void GameScene::Update() {
 			}
 		}
 	}
-	else if (nowScene == 2)
-	{
-	
-		if (soundCount == 0)
-		{
+	else if (nowScene == 2) 	{
+
+		if (soundCount == 0) 		{
 			//サウンド再生
 			gameoverAudio->PlayWave("Resources/GameOver.wav");
 		}
-		else if (soundCount > 4800)
-		{
+		else if (soundCount > 4800) 		{
 			soundCount = 0;
 		}
 		soundCount++;
-		
+
 		cameraTarget.y = 35;
 		Object3d::SetEye(cameraEye);
 		Object3d::SetTarget(cameraTarget);
-	if (input->TriggerKey(DIK_SPACE))
-	{
-		nowScene = 3;
+		if (input->TriggerKey(DIK_SPACE)) 	{
+			nowScene = 3;
+		}
 	}
-	}
-	else if (nowScene == 3)
-	{
+	else if (nowScene == 3) 	{
 		gameoverAudio->Stop();
+		count = 0;
 		soundCount = 0;
-		walkCountOnesP = 0;
-		walkCountTensP = 0;
-		walkCountHundredsP = 0;
+		scoreCountOne = 0;
+		scoreCountTen = 0;
+		scoreCountHundred = 0;
+		scrollCount = 0;
 		cameraEye.x = 0;
-		cameraEye.y = 10;
-		cameraTarget.y = -3;
+		cameraEye.y = 10.0f;
+		cameraEye.z = -40.0f;
+		cameraTarget.y = -3.0f;
+		cameraTarget.z = -25.0f;
 		Object3d::SetEye(cameraEye);
 		Object3d::SetTarget(cameraTarget);
 		nowScene = 0;
+		resetPos();
 	}
 	playerObj->Update();
 	playerJumpLObj->Update();
@@ -827,6 +818,30 @@ void GameScene::Update() {
 	}
 }
 
+void GameScene::resetPos() {
+	playerObj->SetPosition({ 0.0f, 0.0f, -35.0f });
+	playerJumpRObj->SetPosition(playerObj->GetPosition());
+	playerJumpLObj->SetPosition(playerObj->GetPosition());
+
+	groundObj->SetPosition({ 0.0f, 0.0f, 0.0f });
+
+	largeCarRObj[0]->SetPosition({ 40.0f, 0.0f, -25.0f });
+	miniCarRObj[0]->SetPosition({ 40.0f, 0.0f, -25.0f });
+	truckRObj[0]->SetPosition({ 40.0f, 0.0f, -25.0f });
+
+	largeCarLObj[0]->SetPosition({ -40.0f, 0.0f, -15.0f });
+	miniCarLObj[0]->SetPosition({ -40.0f, 0.0f, -15.0f });
+	truckLObj[0]->SetPosition({ -40.0f, 0.0f, -15.0f });
+
+	largeCarRObj[1]->SetPosition({ 40.0f, 0.0f, 5.0f });
+	miniCarRObj[1]->SetPosition({ 40.0f, 0.0f, 5.0f });
+	truckRObj[1]->SetPosition({ 40.0f, 0.0f, 5.0f });
+
+	largeCarLObj[1]->SetPosition({ -40.0f, 0.0f, 15.0f });
+	miniCarLObj[1]->SetPosition({ -40.0f, 0.0f, 15.0f });
+	truckLObj[1]->SetPosition({ -40.0f, 0.0f, 15.0f });
+}
+
 void GameScene::ScrollCarPos(int activeCarNum) {
 	XMFLOAT3 activeLargeCarRPos = largeCarRObj[activeCarNum]->GetPosition();
 	XMFLOAT3 activeMiniCarRPos = miniCarRObj[activeCarNum]->GetPosition();
@@ -836,12 +851,12 @@ void GameScene::ScrollCarPos(int activeCarNum) {
 	XMFLOAT3 activeMiniCarLPos = miniCarLObj[activeCarNum]->GetPosition();
 	XMFLOAT3 activeTruckLPos = truckLObj[activeCarNum]->GetPosition();
 
-	activeLargeCarRPos.x = 145.0f;
-	activeMiniCarRPos.x = 145.0f;
-	activeTruckRPos.x = 145.0f;
-	activeLargeCarLPos.x = -145.0f;
-	activeMiniCarLPos.x = -145.0f;
-	activeTruckLPos.x = -145.0f;
+	activeLargeCarRPos.x = 100.0f;
+	activeMiniCarRPos.x = 100.0f;
+	activeTruckRPos.x = 100.0f;
+	activeLargeCarLPos.x = -100.0f;
+	activeMiniCarLPos.x = -100.0f;
+	activeTruckLPos.x = -100.0f;
 
 	if (activeCarNum == 0) {
 		activeLargeCarRPos.z = -25.0f + (scrollCar * scrollCount);
@@ -919,17 +934,13 @@ void GameScene::Draw() {
 	Sprite::PreDraw(dxCommon->GetCommandList());
 
 	// 前景スプライトの描画
-	if (nowScene == 0)
-	{
-		if (timeRate == 0)
-		{
+	if (nowScene == 0) 	{
+		if (timeRate == 0) 		{
 			title->Draw();
 		}
 	}
-	if (nowScene == 1 || nowScene == 2)
-	{
-		if (nowScene == 1)
-		{
+	if (nowScene == 1 || nowScene == 2) 	{
+		if (nowScene == 1) 		{
 			if (isLeftWarning == true && blinkingL <= 10) {
 				warningMarkLT->Draw();
 				warningMarkLM->Draw();
@@ -972,8 +983,7 @@ void GameScene::Draw() {
 			noHundreds9->SetPosition({ 150.0f,810.0f });
 			uiBack->Draw();
 		}
-		else if (nowScene == 2)
-		{
+		else if (nowScene == 2) 		{
 			gameOver->Draw();
 			noOnes0->SetPosition({ 794.0f,470.0f });
 			noOnes1->SetPosition({ 794.0f,470.0f });
@@ -1007,101 +1017,99 @@ void GameScene::Draw() {
 			noHundreds9->SetPosition({ 674.0f,470.0f });
 		}
 		//1の位
-		if (walkCountOnesP == 0) {
+		if (scoreCountOne == 0) {
 			noOnes0->Draw();
 		}
-		else if (walkCountOnesP == 1) {
+		else if (scoreCountOne == 1) {
 			noOnes1->Draw();
 		}
-		else if (walkCountOnesP == 2) {
+		else if (scoreCountOne == 2) {
 			noOnes2->Draw();
 		}
-		else if (walkCountOnesP == 3) {
+		else if (scoreCountOne == 3) {
 			noOnes3->Draw();
 		}
-		else if (walkCountOnesP == 4) {
+		else if (scoreCountOne == 4) {
 			noOnes4->Draw();
 		}
-		else if (walkCountOnesP == 5) {
+		else if (scoreCountOne == 5) {
 			noOnes5->Draw();
 		}
-		else if (walkCountOnesP == 6) {
+		else if (scoreCountOne == 6) {
 			noOnes6->Draw();
 		}
-		else if (walkCountOnesP == 7) {
+		else if (scoreCountOne == 7) {
 			noOnes7->Draw();
 		}
-		else if (walkCountOnesP == 8) {
+		else if (scoreCountOne == 8) {
 			noOnes8->Draw();
 		}
-		else if (walkCountOnesP == 9) {
+		else if (scoreCountOne == 9) {
 			noOnes9->Draw();
 		}
 		//10の位
-		if (walkCountTensP > 0 || walkCountHundredsP > 0)
-		{
-			if (walkCountTensP == 0) {
+		if (scoreCountTen > 0 || scoreCountHundred > 0) 		{
+			if (scoreCountTen == 0) {
 				noTens0->Draw();
 			}
-			else if (walkCountTensP == 1) {
+			else if (scoreCountTen == 1) {
 				noTens1->Draw();
 			}
-			else if (walkCountTensP == 2) {
+			else if (scoreCountTen == 2) {
 				noTens2->Draw();
 			}
-			else if (walkCountTensP == 3) {
+			else if (scoreCountTen == 3) {
 				noTens3->Draw();
 			}
-			else if (walkCountTensP == 4) {
+			else if (scoreCountTen == 4) {
 				noTens4->Draw();
 			}
-			else if (walkCountTensP == 5) {
+			else if (scoreCountTen == 5) {
 				noTens5->Draw();
 			}
-			else if (walkCountTensP == 6) {
+			else if (scoreCountTen == 6) {
 				noTens6->Draw();
 			}
-			else if (walkCountTensP == 7) {
+			else if (scoreCountTen == 7) {
 				noTens7->Draw();
 			}
-			else if (walkCountTensP == 8) {
+			else if (scoreCountTen == 8) {
 				noTens8->Draw();
 			}
-			else if (walkCountTensP == 9) {
+			else if (scoreCountTen == 9) {
 				noTens9->Draw();
 			}
 		}
 		//100の位
-		if (walkCountHundredsP > 0)
-		{
-			if (walkCountHundredsP == 0) {
+		if (scoreCountHundred > 0) 		{
+			if (scoreCountHundred == 0) {
 				noHundreds0->Draw();
 			}
-			else if (walkCountHundredsP == 1) {
+			else if (scoreCountHundred == 1) {
 				noHundreds1->Draw();
 			}
-			else if (walkCountHundredsP == 2) {
+			else if (scoreCountHundred == 2) {
 				noHundreds2->Draw();
 			}
-			else if (walkCountHundredsP == 3) {
+			else if (scoreCountHundred == 3) {
 				noHundreds3->Draw();
 			}
-			else if (walkCountHundredsP == 4) {
+			else if (scoreCountHundred == 4) {
 				noHundreds4->Draw();
 			}
-			else if (walkCountHundredsP == 5) {
+			else if (scoreCountHundred == 5) {
 				noHundreds5->Draw();
 			}
-			else if (walkCountHundredsP == 6) {
+			else if (scoreCountHundred == 6) {
 				noHundreds6->Draw();
 			}
-			else if (walkCountHundredsP == 7) {
+			else if (scoreCountHundred == 7) {
 				noHundreds7->Draw();
 			}
-			else if (walkCountHundredsP == 8) {
+			else if (scoreCountHundred == 8) {
 				noHundreds8->Draw();
 			}
-			else if (walkCountHundredsP == 9) {
+			else if (scoreCountHundred == 9) {
 				noHundreds9->Draw();
 			}
 		}

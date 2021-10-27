@@ -34,6 +34,8 @@ public: // メンバ関数
 	void Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio);
 	// 毎フレーム処理
 	void Update();
+	//pos初期化
+	void resetPos();
 	//車の描画位置初期化
 	void ScrollCarPos(int activeCarNum);
 	// 描画
@@ -152,10 +154,10 @@ private: // メンバ変数
 	float nowTime = 0;
 	float endTime = 1.0;
 	float timeRate = 0;
-	int isChange = 0;
-	int walkCountOnesP = 0;
-	int walkCountTensP = 0;
-	int walkCountHundredsP = 0;
+	bool isChange = false;
+	int scoreCountOne = 0;
+	int scoreCountTen = 0;
+	int scoreCountHundred = 0;
 	int soundCount = -10;
 	int soundCount2 = -10;
 };
