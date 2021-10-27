@@ -34,6 +34,29 @@ GameScene::~GameScene() {
 	safe_delete(warningMarkRT);
 	safe_delete(warningMarkRM);
 	safe_delete(warningMarkRB);
+	safe_delete(title);
+	safe_delete(noOnes0);
+	safe_delete(noOnes1);
+	safe_delete(noOnes2);
+	safe_delete(noOnes3);
+	safe_delete(noOnes4);
+	safe_delete(noOnes5);
+	safe_delete(noOnes6);
+	safe_delete(noOnes7);
+	safe_delete(noOnes8);
+	safe_delete(noOnes9);
+	safe_delete(noTens0);
+	safe_delete(noTens1);
+	safe_delete(noTens2);
+	safe_delete(noTens3);
+	safe_delete(noTens4);
+	safe_delete(noTens5);
+	safe_delete(noTens6);
+	safe_delete(noTens7);
+	safe_delete(noTens8);
+	safe_delete(noTens9);
+	safe_delete(uiBack);
+	safe_delete(gameOver);
 }
 
 void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio) {
@@ -44,8 +67,12 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio) 
 
 	this->dxCommon = dxCommon;
 	this->input = input;
-	this->audio = audio;
-
+	this->titleAudio = audio;
+	this->playAudio = audio;
+	this->gameoverAudio = audio;
+	this->carAudio = audio;
+	this->dangerAudio = audio;
+	this->deadAudio = audio;
 	// デバッグテキスト用テクスチャ読み込み
 	if (!Sprite::LoadTexture(debugTextTexNumber, L"Resources/debugfont.png")) {
 		assert(0);
@@ -81,6 +108,213 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio) 
 	isRightWarning = false;
 	isLeftWarning = false;
 	blinkingR = 0;
+
+	// テクスチャ読み込み
+	if (!Sprite::LoadTexture(2, L"Resources/title.png")) {
+		assert(0);
+	}
+	// 前景スプライト生成
+	//警告(左上)
+	title = Sprite::Create(2, { 0.0f,0.0f });
+	title->SetSize({ 1280.0f,960.0f });
+
+
+	// テクスチャ読み込み
+	if (!Sprite::LoadTexture(3, L"Resources/No/No0.png")) {
+		assert(0);
+	}
+	noOnes0 = Sprite::Create(3, { 0.0f,0.0f });
+	noOnes0->SetSize({ 100.0f,100.0f });
+	// テクスチャ読み込み
+	if (!Sprite::LoadTexture(4, L"Resources/No/No1.png")) {
+		assert(0);
+	}
+	noOnes1 = Sprite::Create(4, { 0.0f,0.0f });
+	noOnes1->SetSize({ 100.0f,100.0f });
+	// テクスチャ読み込み
+	if (!Sprite::LoadTexture(5, L"Resources/No/No2.png")) {
+		assert(0);
+	}
+	noOnes2 = Sprite::Create(5, { 0.0f,0.0f });
+	noOnes2->SetSize({ 100.0f,100.0f });
+	// テクスチャ読み込み
+	if (!Sprite::LoadTexture(6, L"Resources/No/No3.png")) {
+		assert(0);
+	}
+	noOnes3 = Sprite::Create(6, { 0.0f,0.0f });
+	noOnes3->SetSize({ 100.0f,100.0f });
+	// テクスチャ読み込み
+	if (!Sprite::LoadTexture(7, L"Resources/No/No4.png")) {
+		assert(0);
+	}
+	noOnes4 = Sprite::Create(7, { 0.0f,0.0f });
+	noOnes4->SetSize({ 100.0f,100.0f });
+	// テクスチャ読み込み
+	if (!Sprite::LoadTexture(8, L"Resources/No/No5.png")) {
+		assert(0);
+	}
+	noOnes5 = Sprite::Create(8, { 0.0f,0.0f });
+	noOnes5->SetSize({ 100.0f,100.0f });
+	// テクスチャ読み込み
+	if (!Sprite::LoadTexture(9, L"Resources/No/No6.png")) {
+		assert(0);
+	}
+	noOnes6 = Sprite::Create(9, { 0.0f,0.0f });
+	noOnes6->SetSize({ 100.0f,100.0f });
+	// テクスチャ読み込み
+	if (!Sprite::LoadTexture(10, L"Resources/No/No7.png")) {
+		assert(0);
+	}
+	noOnes7 = Sprite::Create(10, { 0.0f,0.0f });
+	noOnes7->SetSize({ 100.0f,100.0f });
+	// テクスチャ読み込み
+	if (!Sprite::LoadTexture(11, L"Resources/No/No8.png")) {
+		assert(0);
+	}
+	noOnes8 = Sprite::Create(11, { 0.0f,0.0f });
+	noOnes8->SetSize({ 100.0f,100.0f });
+	// テクスチャ読み込み
+	if (!Sprite::LoadTexture(12, L"Resources/No/No9.png")) {
+		assert(0);
+	}
+	noOnes9 = Sprite::Create(12, { 0.0f,0.0f });
+	noOnes9->SetSize({ 100.0f,100.0f });
+	// テクスチャ読み込み
+	if (!Sprite::LoadTexture(3, L"Resources/No/No0.png")) {
+		assert(0);
+	}
+	noTens0 = Sprite::Create(3, { 0.0f,0.0f });
+	noTens0->SetSize({ 100.0f,100.0f });
+	// テクスチャ読み込み
+	if (!Sprite::LoadTexture(4, L"Resources/No/No1.png")) {
+		assert(0);
+	}
+	noTens1 = Sprite::Create(4, { 0.0f,0.0f });
+	noTens1->SetSize({ 100.0f,100.0f });
+	// テクスチャ読み込み
+	if (!Sprite::LoadTexture(5, L"Resources/No/No2.png")) {
+		assert(0);
+	}
+	noTens2 = Sprite::Create(5, { 0.0f,0.0f });
+	noTens2->SetSize({ 100.0f,100.0f });
+	// テクスチャ読み込み
+	if (!Sprite::LoadTexture(6, L"Resources/No/No3.png")) {
+		assert(0);
+	}
+	noTens3 = Sprite::Create(6, { 0.0f,0.0f });
+	noTens3->SetSize({ 100.0f,100.0f });
+	// テクスチャ読み込み
+	if (!Sprite::LoadTexture(7, L"Resources/No/No4.png")) {
+		assert(0);
+	}
+	noTens4 = Sprite::Create(7, { 0.0f,0.0f });
+	noTens4->SetSize({ 100.0f,100.0f });
+	// テクスチャ読み込み
+	if (!Sprite::LoadTexture(8, L"Resources/No/No5.png")) {
+		assert(0);
+	}
+	noTens5 = Sprite::Create(8, { 0.0f,0.0f });
+	noTens5->SetSize({ 100.0f,100.0f });
+	// テクスチャ読み込み
+	if (!Sprite::LoadTexture(9, L"Resources/No/No6.png")) {
+		assert(0);
+	}
+	noTens6 = Sprite::Create(9, { 0.0f,0.0f });
+	noTens6->SetSize({ 100.0f,100.0f });
+	// テクスチャ読み込み
+	if (!Sprite::LoadTexture(10, L"Resources/No/No7.png")) {
+		assert(0);
+	}
+	noTens7 = Sprite::Create(10, { 0.0f,0.0f });
+	noTens7->SetSize({ 100.0f,100.0f });
+	// テクスチャ読み込み
+	if (!Sprite::LoadTexture(11, L"Resources/No/No8.png")) {
+		assert(0);
+	}
+	noTens8 = Sprite::Create(11, { 0.0f,0.0f });
+	noTens8->SetSize({ 100.0f,100.0f });
+	// テクスチャ読み込み
+	if (!Sprite::LoadTexture(12, L"Resources/No/No9.png")) {
+		assert(0);
+	}
+	noTens9 = Sprite::Create(12, { 0.0f,0.0f });
+	noTens9->SetSize({ 100.0f,100.0f });
+	// テクスチャ読み込み
+	if (!Sprite::LoadTexture(3, L"Resources/No/No0.png")) {
+		assert(0);
+	}
+	noHundreds0 = Sprite::Create(3, { 0.0f,0.0f });
+	noHundreds0->SetSize({ 100.0f,100.0f });
+	// テクスチャ読み込み
+	if (!Sprite::LoadTexture(4, L"Resources/No/No1.png")) {
+		assert(0);
+	}
+	noHundreds1 = Sprite::Create(4, { 0.0f,0.0f });
+	noHundreds1->SetSize({ 100.0f,100.0f });
+	// テクスチャ読み込み
+	if (!Sprite::LoadTexture(5, L"Resources/No/No2.png")) {
+		assert(0);
+	}
+	noHundreds2 = Sprite::Create(5, { 0.0f,0.0f });
+	noHundreds2->SetSize({ 100.0f,100.0f });
+	// テクスチャ読み込み
+	if (!Sprite::LoadTexture(6, L"Resources/No/No3.png")) {
+		assert(0);
+	}
+	noHundreds3 = Sprite::Create(6, { 0.0f,0.0f });
+	noHundreds3->SetSize({ 100.0f,100.0f });
+	// テクスチャ読み込み
+	if (!Sprite::LoadTexture(7, L"Resources/No/No4.png")) {
+		assert(0);
+	}
+	noHundreds4 = Sprite::Create(7, { 0.0f,0.0f });
+	noHundreds4->SetSize({ 100.0f,100.0f });
+	// テクスチャ読み込み
+	if (!Sprite::LoadTexture(8, L"Resources/No/No5.png")) {
+		assert(0);
+	}
+	noHundreds5 = Sprite::Create(8, { 0.0f,0.0f });
+	noHundreds5->SetSize({ 100.0f,100.0f });
+	// テクスチャ読み込み
+	if (!Sprite::LoadTexture(9, L"Resources/No/No6.png")) {
+		assert(0);
+	}
+	noHundreds6 = Sprite::Create(9, { 0.0f,0.0f });
+	noHundreds6->SetSize({ 100.0f,100.0f });
+	// テクスチャ読み込み
+	if (!Sprite::LoadTexture(10, L"Resources/No/No7.png")) {
+		assert(0);
+	}
+	noHundreds7 = Sprite::Create(10, { 0.0f,0.0f });
+	noHundreds7->SetSize({ 100.0f,100.0f });
+	// テクスチャ読み込み
+	if (!Sprite::LoadTexture(11, L"Resources/No/No8.png")) {
+		assert(0);
+	}
+	noHundreds8 = Sprite::Create(11, { 0.0f,0.0f });
+	noHundreds8->SetSize({ 100.0f,100.0f });
+	// テクスチャ読み込み
+	if (!Sprite::LoadTexture(12, L"Resources/No/No9.png")) {
+		assert(0);
+	}
+	noHundreds9 = Sprite::Create(12, { 0.0f,0.0f });
+	noHundreds9->SetSize({ 100.0f,100.0f });
+
+
+
+	// テクスチャ読み込み
+	if (!Sprite::LoadTexture(13, L"Resources/uiBack.png")) {
+		assert(0);
+	}
+	uiBack = Sprite::Create(13, { 0.0f,0.0f });
+	uiBack->SetSize({ 1280.0f,960.0f });
+
+	// テクスチャ読み込み
+	if (!Sprite::LoadTexture(14, L"Resources/GameOver.png")) {
+		assert(0);
+	}
+	gameOver = Sprite::Create(14, { 0.0f,0.0f });
+	gameOver->SetSize({ 1280.0f,960.0f });
 
 	//.objの名前を指定してモデルを読み込む
 	playerModel = playerModel->CreateFromObject("player");
@@ -166,9 +400,9 @@ void GameScene::Update() {
 	}
 
 	//X座標、Y座標を指定して表示
-	debugText.Print("Hello,DirectX!!", 200, 100, 1.0f);
+	//debugText.Print("Hello,DirectX!!", 200, 100, 1.0f);
 	//X座標、Y座標、縮尺を指定して表示
-	debugText.Print("Nihon Kogakuin", 200, 200, 2.0f);
+	//debugText.Print("Nihon Kogakuin", 200, 200, 2.0f);
 
 	// 現在の座標を取得
 	XMFLOAT3 playerPos = playerObj->GetPosition();
@@ -187,274 +421,396 @@ void GameScene::Update() {
 	//largeCarPos.x += 1.0f;
 	//largeCarObj->SetPosition(largeCarPos);
 
-	// オブジェクト移動
-	if (input->PushKey(DIK_UP) || input->PushKey(DIK_DOWN) || input->PushKey(DIK_RIGHT) || input->PushKey(DIK_LEFT)) {
-		// 移動後の座標を計算
-		if (input->PushKey(DIK_UP)) {
+	
+
+	if (nowScene == 0)
+	{
+		if (input->TriggerKey(DIK_SPACE))
+		{
+			isChange = 1;
+			
+			Object3d::SetEye(cameraEye);
+			Object3d::SetTarget(cameraTarget);
+		}
+
+		if (isChange == 1)
+		{
+			nowTime += 0.01;
+			timeRate = min(nowTime / endTime, 1);
+
+			cameraEye.x = 0 * (1.0f - (timeRate * timeRate) * (3 - (2 * timeRate))) + 15 * (timeRate * timeRate) * (3 - (2 * timeRate));
+			cameraEye.y = 10 * (1.0f - (timeRate * timeRate) * (3 - (2 * timeRate))) + 20 * (timeRate * timeRate) * (3 - (2 * timeRate));
+			cameraTarget.y = -3 * (1.0f - (timeRate * timeRate) * (3 - (2 * timeRate))) + -10 * (timeRate * timeRate) * (3 - (2 * timeRate));
+			Object3d::SetEye(cameraEye);
+			Object3d::SetTarget(cameraTarget);
+		}
+		
+
+		if (soundCount == 0)
+		{
+			//サウンド再生
+			titleAudio->PlayWave("Resources/Title.wav");
+		}
+		else if (soundCount > 5400)
+		{
+			soundCount = 0;
+		}
+		soundCount++;
+		if (timeRate == 1)
+		{
+			nowScene = 1;
+			soundCount = 0;
+			isChange = 0;
+			nowTime = 0;
+			timeRate = 0;
+			titleAudio->Stop();
+		}
+	}
+	else if (nowScene == 1)
+	{
+		
+		if (soundCount == 0)
+		{
+			//サウンド再生
+			playAudio->PlayWave("Resources/Play.wav");
+		}
+		else if (soundCount > 4800)
+		{
+			soundCount = -10;
+		}
+		soundCount++;
+		
+		if (input->TriggerKey(DIK_K))
+		{
+			nowScene = 2;
+			//当たり判定の中に入れるやつ
+			playAudio->Stop();
+			soundCount = 0;
+			deadAudio->PlayWave("Resources/Dead.wav");
+
+			dangerAudio->PlayWave("Resources/Danger.wav");
+			carAudio->PlayWave("Resources/Car.wav");
+		}
+		// オブジェクト移動
+		if (input->PushKey(DIK_UP) || input->PushKey(DIK_DOWN) || input->PushKey(DIK_RIGHT) || input->PushKey(DIK_LEFT)) {
+			// 移動後の座標を計算
+			if (input->PushKey(DIK_UP)) {
+				playerPos.z += zMove;
+				skydomePos.z += zMove;
+				cameraEye.z += zMove;
+				cameraTarget.z += zMove;
+			}
+			else if (input->PushKey(DIK_DOWN)) {
+				playerPos.z -= zMove;
+				skydomePos.z -= zMove;
+				cameraEye.z -= zMove;
+				cameraTarget.z -= zMove;
+			}
+
+			if (input->PushKey(DIK_RIGHT)) {
+				playerPos.x += zMove;
+				skydomePos.x += zMove;
+				cameraEye.x += zMove;
+				cameraTarget.x += zMove;
+			}
+			else if (input->PushKey(DIK_LEFT)) {
+				playerPos.x -= zMove;
+				skydomePos.x -= zMove;
+				cameraEye.x -= zMove;
+				cameraTarget.x -= zMove;
+			}
+
+			// 座標の変更を反映
+			playerObj->SetPosition(playerPos);
+			playerJumpLObj->SetPosition(playerPos);
+			playerJumpRObj->SetPosition(playerPos);
+			skydomeObj->SetPosition(skydomePos);
+			Object3d::SetEye(cameraEye);
+			Object3d::SetTarget(cameraTarget);
+		}
+
+		// カメラ移動
+		if (input->PushKey(DIK_W) || input->PushKey(DIK_S) || input->PushKey(DIK_D) || input->PushKey(DIK_A)) {
+			if (input->PushKey(DIK_W)) {
+				Object3d::CameraMoveVector({ 0.0f,+1.0f,0.0f });
+			}
+			else if (input->PushKey(DIK_S)) {
+				Object3d::CameraMoveVector({ 0.0f,-1.0f,0.0f });
+			}
+
+			if (input->PushKey(DIK_D)) {
+				Object3d::CameraMoveEyeVector({ +1.0f,0.0f,0.0f });
+			}
+			else if (input->PushKey(DIK_A)) {
+				Object3d::CameraMoveEyeVector({ -1.0f,0.0f,0.0f });
+			}
+		}
+
+		if (input->TriggerKey(DIK_SPACE) && !isJumpUp && !isJumpDown) {
+			isJumpUp = true;
+			if (count == 0) {
+				walkCountOnesP++;
+			}
+		}
+
+		if (walkCountOnesP == 10)
+		{
+			walkCountTensP++;
+			walkCountOnesP = 0;
+		}
+		if (walkCountTensP == 10)
+		{
+			walkCountHundredsP++;
+			walkCountTensP = 0;
+		}
+
+		if (isJumpUp == true) {
+			// 移動後の座標を計算
 			playerPos.z += zMove;
+			playerPos.y += yMove;
 			skydomePos.z += zMove;
 			cameraEye.z += zMove;
 			cameraTarget.z += zMove;
-		}
-		else if (input->PushKey(DIK_DOWN)) {
-			playerPos.z -= zMove;
-			skydomePos.z -= zMove;
-			cameraEye.z -= zMove;
-			cameraTarget.z -= zMove;
-		}
 
-		if (input->PushKey(DIK_RIGHT)) {
-			playerPos.x += zMove;
-			skydomePos.x += zMove;
-			cameraEye.x += zMove;
-			cameraTarget.x += zMove;
-		}
-		else if (input->PushKey(DIK_LEFT)) {
-			playerPos.x -= zMove;
-			skydomePos.x -= zMove;
-			cameraEye.x -= zMove;
-			cameraTarget.x -= zMove;
-		}
+			// 座標の変更を反映
+			playerObj->SetPosition(playerPos);
+			playerJumpLObj->SetPosition(playerPos);
+			playerJumpRObj->SetPosition(playerPos);
+			skydomeObj->SetPosition(skydomePos);
+			Object3d::SetEye(cameraEye);
+			Object3d::SetTarget(cameraTarget);
 
-		// 座標の変更を反映
-		playerObj->SetPosition(playerPos);
-		playerJumpLObj->SetPosition(playerPos);
-		playerJumpRObj->SetPosition(playerPos);
-		skydomeObj->SetPosition(skydomePos);
-		Object3d::SetEye(cameraEye);
-		Object3d::SetTarget(cameraTarget);
-	}
-
-	// カメラ移動
-	if (input->PushKey(DIK_W) || input->PushKey(DIK_S) || input->PushKey(DIK_D) || input->PushKey(DIK_A)) {
-		if (input->PushKey(DIK_W)) {
-			Object3d::CameraMoveVector({ 0.0f,+1.0f,0.0f });
-		}
-		else if (input->PushKey(DIK_S)) {
-			Object3d::CameraMoveVector({ 0.0f,-1.0f,0.0f });
-		}
-
-		if (input->PushKey(DIK_D)) {
-			Object3d::CameraMoveEyeVector({ +1.0f,0.0f,0.0f });
-		}
-		else if (input->PushKey(DIK_A)) {
-			Object3d::CameraMoveEyeVector({ -1.0f,0.0f,0.0f });
-		}
-	}
-
-	if (input->TriggerKey(DIK_SPACE) && !isJumpUp && !isJumpDown) {
-		isJumpUp = true;
-	}
-
-	if (isJumpUp == true) {
-		// 移動後の座標を計算
-		playerPos.z += zMove;
-		playerPos.y += yMove;
-		skydomePos.z += zMove;
-		cameraEye.z += zMove;
-		cameraTarget.z += zMove;
-
-		// 座標の変更を反映
-		playerObj->SetPosition(playerPos);
-		playerJumpLObj->SetPosition(playerPos);
-		playerJumpRObj->SetPosition(playerPos);
-		skydomeObj->SetPosition(skydomePos);
-		Object3d::SetEye(cameraEye);
-		Object3d::SetTarget(cameraTarget);
-
-		if (playerPos.y >= 2.5f) {
-			isJumpUp = false;
-			isJumpDown = true;
-		}
-	}
-
-	if (isJumpDown == true) {
-		// 移動後の座標を計算
-		playerPos.z += zMove;
-		playerPos.y -= yMove;
-		skydomePos.z += zMove;
-		cameraEye.z += zMove;
-		cameraTarget.z += zMove;
-
-		// 座標の変更を反映
-		playerObj->SetPosition(playerPos);
-		playerJumpLObj->SetPosition(playerPos);
-		playerJumpRObj->SetPosition(playerPos);
-		skydomeObj->SetPosition(skydomePos);
-		Object3d::SetEye(cameraEye);
-		Object3d::SetTarget(cameraTarget);
-
-		if (playerPos.y <= 0.0f) {
-			isJumpDown = false;
-			playerPos.y = 0;
-			count++;
-			if (isRightLeg == true) {
-				isLeftLeg = true;
-				isRightLeg = false;
-			}
-			else if (isLeftLeg == true) {
-				isLeftLeg = false;
-				isRightLeg = true;
+			if (playerPos.y >= 2.5f) {
+				isJumpUp = false;
+				isJumpDown = true;
 			}
 		}
-	}
 
-	if (count >= 3) {
-		groundPos.z = playerPos.z + scrollGround;
-		groundObj->SetPosition(groundPos);
-		count = 0;
-		ScrollCarPos(activeCarNum);
-		if (activeCarNum == 0) {
-			activeCarNum = 1;
-		}
-		else {
-			activeCarNum = 0;
-			scrollCount++;
-		}
-	}
+		if (isJumpDown == true) {
+			// 移動後の座標を計算
+			playerPos.z += zMove;
+			playerPos.y -= yMove;
+			skydomePos.z += zMove;
+			cameraEye.z += zMove;
+			cameraTarget.z += zMove;
 
-	//警告
-	if (input->TriggerKey(DIK_1)) {
-		isRightWarning = true;
-		isLeftWarning = true;
-	}
-	else if (input->TriggerKey(DIK_2)) {
-		isRightWarning = true;
-		isLeftWarning = false;
-	}
-	else if (input->TriggerKey(DIK_3)) {
-		isRightWarning = false;
-		isLeftWarning = true;
-	}
-	else if (input->TriggerKey(DIK_4)) {
-		isRightWarning = false;
-		isLeftWarning = false;
-	}
+			// 座標の変更を反映
+			playerObj->SetPosition(playerPos);
+			playerJumpLObj->SetPosition(playerPos);
+			playerJumpRObj->SetPosition(playerPos);
+			skydomeObj->SetPosition(skydomePos);
+			Object3d::SetEye(cameraEye);
+			Object3d::SetTarget(cameraTarget);
 
-	//警告点滅
-
-	if (isRightWarning == true) {
-		blinkingR++;
-	}
-	else if (isRightWarning == false) {
-		blinkingR = 0;
-	}
-	if (blinkingR >= 20) {
-		blinkingR = 0;
-		blinkRCount++;
-	}
-	if (blinkRCount >= 5) {
-		isRightWarning = false;
-		isRunCarR = true;
-	}
-
-	if (isLeftWarning == true) {
-		blinkingL++;
-	}
-	else if (isLeftWarning == false) {
-		blinkingL = 0;
-	}
-	if (blinkingL >= 20) {
-		blinkingL = 0;
-		blinkLCount++;
-	}
-	if (blinkLCount >= 5) {
-		isLeftWarning = false;
-		isRunCarL = true;
-	}
-
-	if (isRunCarR == true) {
-		if (carTypeR == 0) {
-			activeLargeCarRPos.x -= carMove;
-			largeCarRObj[activeCarNum]->SetPosition(activeLargeCarRPos);
-		}
-		else if (carTypeR == 1) {
-			activeMiniCarRPos.x -= carMove;
-			miniCarRObj[activeCarNum]->SetPosition(activeMiniCarRPos);
-		}
-		else if (carTypeR == 2) {
-			activeTruckRPos.x -= carMove;
-			truckRObj[activeCarNum]->SetPosition(activeTruckRPos);
-		}
-	}
-
-	if (isRunCarL == true) {
-		if (carTypeL == 0) {
-			activeLargeCarLPos.x += carMove;
-			largeCarLObj[activeCarNum]->SetPosition(activeLargeCarLPos);
-		}
-		else if (carTypeL == 1) {
-			activeMiniCarLPos.x += carMove;
-			miniCarLObj[activeCarNum]->SetPosition(activeMiniCarLPos);
-		}
-		else if (carTypeL == 2) {
-			activeTruckLPos.x += carMove;
-			truckLObj[activeCarNum]->SetPosition(activeTruckLPos);
-		}
-	}
-
-	if (activeLargeCarRPos.x <= -150.0f || activeMiniCarRPos.x <= -150.0f || activeTruckRPos.x <= -150.0f) {
-		blinkRCount = 0;
-		isRunCarR = false;
-
-		if (carTypeR == 0) {
-			activeLargeCarRPos.x = 150.0f;
-			largeCarRObj[activeCarNum]->SetPosition(activeLargeCarRPos);
-		}
-		if (carTypeR == 1) {
-			activeMiniCarRPos.x = 150.0f;
-			miniCarRObj[activeCarNum]->SetPosition(activeMiniCarRPos);
-		}
-		if (carTypeR == 2) {
-			activeTruckRPos.x = 150.0f;
-			truckRObj[activeCarNum]->SetPosition(activeTruckRPos);
+			if (playerPos.y <= 0.0f) {
+				isJumpDown = false;
+				playerPos.y = 0;
+				count++;
+				if (isRightLeg == true) {
+					isLeftLeg = true;
+					isRightLeg = false;
+				}
+				else if (isLeftLeg == true) {
+					isLeftLeg = false;
+					isRightLeg = true;
+				}
+			}
 		}
 
-		srand(time(NULL));
-		carTypeR = rand() % 3;
-		warningRWaitTime = rand() % 50;
-		isWarningRWait = true;
-	}
+		if (count >= 3) {
+			groundPos.z = playerPos.z + scrollGround;
+			groundObj->SetPosition(groundPos);
+			count = 0;
+			ScrollCarPos(activeCarNum);
+			if (activeCarNum == 0) {
+				activeCarNum = 1;
+			}
+			else {
+				activeCarNum = 0;
+				scrollCount++;
+			}
+		}
 
-	if (isWarningRWait == true) {
-		warningRWaitTime--;
-		if (warningRWaitTime <= 0) {
+		//警告
+		if (input->TriggerKey(DIK_1)) {
 			isRightWarning = true;
-			isWarningRWait = false;
-		}
-	}
-
-	if (activeLargeCarLPos.x >= +150.0f || activeMiniCarLPos.x >= +150.0f || activeTruckLPos.x >= +150.0f) {
-		blinkLCount = 0;
-		isRunCarL = false;
-
-		if (carTypeL == 0) {
-			activeLargeCarLPos.x = -150.0f;
-			largeCarLObj[activeCarNum]->SetPosition(activeLargeCarLPos);
-		}
-		if (carTypeL == 1) {
-			activeMiniCarLPos.x = -150.0f;
-			miniCarLObj[activeCarNum]->SetPosition(activeMiniCarLPos);
-		}
-		if (carTypeL == 2) {
-			activeTruckLPos.x = -150.0f;
-			truckLObj[activeCarNum]->SetPosition(activeTruckLPos);
-		}
-
-		srand(time(NULL));
-		carTypeL = rand() % 3;
-		warningLWaitTime = rand() % 50;
-		isWarningLWait = true;
-	}
-
-	if (isWarningLWait == true) {
-		warningLWaitTime--;
-		if (warningLWaitTime <= 0) {
 			isLeftWarning = true;
-			isWarningLWait = false;
+		}
+		else if (input->TriggerKey(DIK_2)) {
+			isRightWarning = true;
+			isLeftWarning = false;
+		}
+		else if (input->TriggerKey(DIK_3)) {
+			isRightWarning = false;
+			isLeftWarning = true;
+		}
+		else if (input->TriggerKey(DIK_4)) {
+			isRightWarning = false;
+			isLeftWarning = false;
+		}
+
+		//警告点滅
+
+		if (isRightWarning == true) {
+			blinkingR++;
+			
+		}
+		else if (isRightWarning == false) {
+			blinkingR = 0;
+		}
+		if (blinkingR >= 20) {
+			blinkingR = 0;
+			blinkRCount++;
+		}
+		if (blinkRCount >= 5) {
+			isRightWarning = false;
+			isRunCarR = true;
+		}
+
+		if (isLeftWarning == true) {
+			blinkingL++;
+		}
+		else if (isLeftWarning == false) {
+			blinkingL = 0;
+		}
+		if (blinkingL >= 20) {
+			blinkingL = 0;
+			blinkLCount++;
+		}
+		if (blinkLCount >= 5) {
+			isLeftWarning = false;
+			isRunCarL = true;
+		}
+
+		if (isRunCarR == true) {
+			
+			if (carTypeR == 0) {
+				activeLargeCarRPos.x -= carMove;
+				largeCarRObj[activeCarNum]->SetPosition(activeLargeCarRPos);
+			}
+			else if (carTypeR == 1) {
+				activeMiniCarRPos.x -= carMove;
+				miniCarRObj[activeCarNum]->SetPosition(activeMiniCarRPos);
+			}
+			else if (carTypeR == 2) {
+				activeTruckRPos.x -= carMove;
+				truckRObj[activeCarNum]->SetPosition(activeTruckRPos);
+			}
+		}
+
+		if (isRunCarL == true) {
+			if (carTypeL == 0) {
+				activeLargeCarLPos.x += carMove;
+				largeCarLObj[activeCarNum]->SetPosition(activeLargeCarLPos);
+			}
+			else if (carTypeL == 1) {
+				activeMiniCarLPos.x += carMove;
+				miniCarLObj[activeCarNum]->SetPosition(activeMiniCarLPos);
+			}
+			else if (carTypeL == 2) {
+				activeTruckLPos.x += carMove;
+				truckLObj[activeCarNum]->SetPosition(activeTruckLPos);
+			}
+		}
+
+		if (activeLargeCarRPos.x <= -150.0f || activeMiniCarRPos.x <= -150.0f || activeTruckRPos.x <= -150.0f) {
+			blinkRCount = 0;
+			isRunCarR = false;
+
+			if (carTypeR == 0) {
+				activeLargeCarRPos.x = 150.0f;
+				largeCarRObj[activeCarNum]->SetPosition(activeLargeCarRPos);
+			}
+			if (carTypeR == 1) {
+				activeMiniCarRPos.x = 150.0f;
+				miniCarRObj[activeCarNum]->SetPosition(activeMiniCarRPos);
+			}
+			if (carTypeR == 2) {
+				activeTruckRPos.x = 150.0f;
+				truckRObj[activeCarNum]->SetPosition(activeTruckRPos);
+			}
+
+			srand(time(NULL));
+			carTypeR = rand() % 3;
+			warningRWaitTime = rand() % 50;
+			isWarningRWait = true;
+		}
+
+		if (isWarningRWait == true) {
+			warningRWaitTime--;
+			if (warningRWaitTime <= 0) {
+				isRightWarning = true;
+				isWarningRWait = false;
+			}
+		}
+
+		if (activeLargeCarLPos.x >= +150.0f || activeMiniCarLPos.x >= +150.0f || activeTruckLPos.x >= +150.0f) {
+			blinkLCount = 0;
+			isRunCarL = false;
+
+			if (carTypeL == 0) {
+				activeLargeCarLPos.x = -150.0f;
+				largeCarLObj[activeCarNum]->SetPosition(activeLargeCarLPos);
+			}
+			if (carTypeL == 1) {
+				activeMiniCarLPos.x = -150.0f;
+				miniCarLObj[activeCarNum]->SetPosition(activeMiniCarLPos);
+			}
+			if (carTypeL == 2) {
+				activeTruckLPos.x = -150.0f;
+				truckLObj[activeCarNum]->SetPosition(activeTruckLPos);
+			}
+
+			srand(time(NULL));
+			carTypeL = rand() % 3;
+			warningLWaitTime = rand() % 50;
+			isWarningLWait = true;
+		}
+
+		if (isWarningLWait == true) {
+			warningLWaitTime--;
+			if (warningLWaitTime <= 0) {
+				isLeftWarning = true;
+				isWarningLWait = false;
+			}
 		}
 	}
-
+	else if (nowScene == 2)
+	{
+	
+		if (soundCount == 0)
+		{
+			//サウンド再生
+			gameoverAudio->PlayWave("Resources/GameOver.wav");
+		}
+		else if (soundCount > 4800)
+		{
+			soundCount = 0;
+		}
+		soundCount++;
+		
+		cameraTarget.y = 35;
+		Object3d::SetEye(cameraEye);
+		Object3d::SetTarget(cameraTarget);
+	if (input->TriggerKey(DIK_SPACE))
+	{
+		nowScene = 3;
+	}
+	}
+	else if (nowScene == 3)
+	{
+		gameoverAudio->Stop();
+		soundCount = 0;
+		walkCountOnesP = 0;
+		walkCountTensP = 0;
+		walkCountHundredsP = 0;
+		cameraEye.x = 0;
+		cameraEye.y = 10;
+		cameraTarget.y = -3;
+		Object3d::SetEye(cameraEye);
+		Object3d::SetTarget(cameraTarget);
+		nowScene = 0;
+	}
 	playerObj->Update();
 	playerJumpLObj->Update();
 	playerJumpRObj->Update();
@@ -544,7 +900,7 @@ void GameScene::Draw() {
 		}
 	}
 
-	//skydomeObj->Draw();
+	skydomeObj->Draw();
 	groundObj->Draw();
 
 	for (int i = 0; i < 2; i++) {
@@ -563,15 +919,192 @@ void GameScene::Draw() {
 	Sprite::PreDraw(dxCommon->GetCommandList());
 
 	// 前景スプライトの描画
-	if (isLeftWarning == true && blinkingL <= 10) {
-		warningMarkLT->Draw();
-		warningMarkLM->Draw();
-		warningMarkLB->Draw();
+	if (nowScene == 0)
+	{
+		if (timeRate == 0)
+		{
+			title->Draw();
+		}
 	}
-	if (isRightWarning == true && blinkingR <= 10) {
-		warningMarkRT->Draw();
-		warningMarkRM->Draw();
-		warningMarkRB->Draw();
+	if (nowScene == 1 || nowScene == 2)
+	{
+		if (nowScene == 1)
+		{
+			if (isLeftWarning == true && blinkingL <= 10) {
+				warningMarkLT->Draw();
+				warningMarkLM->Draw();
+				warningMarkLB->Draw();
+			}
+			if (isRightWarning == true && blinkingR <= 10) {
+				warningMarkRT->Draw();
+				warningMarkRM->Draw();
+				warningMarkRB->Draw();
+			}
+			noOnes0->SetPosition({ 270.0f,810.0f });
+			noOnes1->SetPosition({ 270.0f,810.0f });
+			noOnes2->SetPosition({ 270.0f,810.0f });
+			noOnes3->SetPosition({ 270.0f,810.0f });
+			noOnes4->SetPosition({ 270.0f,810.0f });
+			noOnes5->SetPosition({ 270.0f,810.0f });
+			noOnes6->SetPosition({ 270.0f,810.0f });
+			noOnes7->SetPosition({ 270.0f,810.0f });
+			noOnes8->SetPosition({ 270.0f,810.0f });
+			noOnes9->SetPosition({ 270.0f,810.0f });
+			noTens0->SetPosition({ 210.0f,810.0f });
+			noTens1->SetPosition({ 210.0f,810.0f });
+			noTens2->SetPosition({ 210.0f,810.0f });
+			noTens3->SetPosition({ 210.0f,810.0f });
+			noTens4->SetPosition({ 210.0f,810.0f });
+			noTens5->SetPosition({ 210.0f,810.0f });
+			noTens6->SetPosition({ 210.0f,810.0f });
+			noTens7->SetPosition({ 210.0f,810.0f });
+			noTens8->SetPosition({ 210.0f,810.0f });
+			noTens9->SetPosition({ 210.0f,810.0f });
+			noHundreds0->SetPosition({ 150.0f,810.0f });
+			noHundreds1->SetPosition({ 150.0f,810.0f });
+			noHundreds2->SetPosition({ 150.0f,810.0f });
+			noHundreds3->SetPosition({ 150.0f,810.0f });
+			noHundreds4->SetPosition({ 150.0f,810.0f });
+			noHundreds5->SetPosition({ 150.0f,810.0f });
+			noHundreds6->SetPosition({ 150.0f,810.0f });
+			noHundreds7->SetPosition({ 150.0f,810.0f });
+			noHundreds8->SetPosition({ 150.0f,810.0f });
+			noHundreds9->SetPosition({ 150.0f,810.0f });
+			uiBack->Draw();
+		}
+		else if (nowScene == 2)
+		{
+			gameOver->Draw();
+			noOnes0->SetPosition({ 794.0f,470.0f });
+			noOnes1->SetPosition({ 794.0f,470.0f });
+			noOnes2->SetPosition({ 794.0f,470.0f });
+			noOnes3->SetPosition({ 794.0f,470.0f });
+			noOnes4->SetPosition({ 794.0f,470.0f });
+			noOnes5->SetPosition({ 794.0f,470.0f });
+			noOnes6->SetPosition({ 794.0f,470.0f });
+			noOnes7->SetPosition({ 794.0f,470.0f });
+			noOnes8->SetPosition({ 794.0f,470.0f });
+			noOnes9->SetPosition({ 794.0f,470.0f });
+			noTens0->SetPosition({ 734.0f,470.0f });
+			noTens1->SetPosition({ 734.0f,470.0f });
+			noTens2->SetPosition({ 734.0f,470.0f });
+			noTens3->SetPosition({ 734.0f,470.0f });
+			noTens4->SetPosition({ 734.0f,470.0f });
+			noTens5->SetPosition({ 734.0f,470.0f });
+			noTens6->SetPosition({ 734.0f,470.0f });
+			noTens7->SetPosition({ 734.0f,470.0f });
+			noTens8->SetPosition({ 734.0f,470.0f });
+			noTens9->SetPosition({ 734.0f,470.0f });
+			noHundreds0->SetPosition({ 674.0f,470.0f });
+			noHundreds1->SetPosition({ 674.0f,470.0f });
+			noHundreds2->SetPosition({ 674.0f,470.0f });
+			noHundreds3->SetPosition({ 674.0f,470.0f });
+			noHundreds4->SetPosition({ 674.0f,470.0f });
+			noHundreds5->SetPosition({ 674.0f,470.0f });
+			noHundreds6->SetPosition({ 674.0f,470.0f });
+			noHundreds7->SetPosition({ 674.0f,470.0f });
+			noHundreds8->SetPosition({ 674.0f,470.0f });
+			noHundreds9->SetPosition({ 674.0f,470.0f });
+		}
+		//1の位
+		if (walkCountOnesP == 0) {
+			noOnes0->Draw();
+		}
+		else if (walkCountOnesP == 1) {
+			noOnes1->Draw();
+		}
+		else if (walkCountOnesP == 2) {
+			noOnes2->Draw();
+		}
+		else if (walkCountOnesP == 3) {
+			noOnes3->Draw();
+		}
+		else if (walkCountOnesP == 4) {
+			noOnes4->Draw();
+		}
+		else if (walkCountOnesP == 5) {
+			noOnes5->Draw();
+		}
+		else if (walkCountOnesP == 6) {
+			noOnes6->Draw();
+		}
+		else if (walkCountOnesP == 7) {
+			noOnes7->Draw();
+		}
+		else if (walkCountOnesP == 8) {
+			noOnes8->Draw();
+		}
+		else if (walkCountOnesP == 9) {
+			noOnes9->Draw();
+		}
+		//10の位
+		if (walkCountTensP > 0 || walkCountHundredsP > 0)
+		{
+			if (walkCountTensP == 0) {
+				noTens0->Draw();
+			}
+			else if (walkCountTensP == 1) {
+				noTens1->Draw();
+			}
+			else if (walkCountTensP == 2) {
+				noTens2->Draw();
+			}
+			else if (walkCountTensP == 3) {
+				noTens3->Draw();
+			}
+			else if (walkCountTensP == 4) {
+				noTens4->Draw();
+			}
+			else if (walkCountTensP == 5) {
+				noTens5->Draw();
+			}
+			else if (walkCountTensP == 6) {
+				noTens6->Draw();
+			}
+			else if (walkCountTensP == 7) {
+				noTens7->Draw();
+			}
+			else if (walkCountTensP == 8) {
+				noTens8->Draw();
+			}
+			else if (walkCountTensP == 9) {
+				noTens9->Draw();
+			}
+		}
+		//100の位
+		if (walkCountHundredsP > 0)
+		{
+			if (walkCountHundredsP == 0) {
+				noHundreds0->Draw();
+			}
+			else if (walkCountHundredsP == 1) {
+				noHundreds1->Draw();
+			}
+			else if (walkCountHundredsP == 2) {
+				noHundreds2->Draw();
+			}
+			else if (walkCountHundredsP == 3) {
+				noHundreds3->Draw();
+			}
+			else if (walkCountHundredsP == 4) {
+				noHundreds4->Draw();
+			}
+			else if (walkCountHundredsP == 5) {
+				noHundreds5->Draw();
+			}
+			else if (walkCountHundredsP == 6) {
+				noHundreds6->Draw();
+			}
+			else if (walkCountHundredsP == 7) {
+				noHundreds7->Draw();
+			}
+			else if (walkCountHundredsP == 8) {
+				noHundreds8->Draw();
+			}
+			else if (walkCountHundredsP == 9) {
+				noHundreds9->Draw();
+			}
+		}
 	}
 	// デバッグテキストの描画
 	debugText.DrawAll(dxCommon->GetCommandList());

@@ -42,7 +42,12 @@ public: // メンバ関数
 private: // メンバ変数
 	DirectXCommon* dxCommon = nullptr;
 	Input* input = nullptr;
-	Audio* audio = nullptr;
+	Audio* titleAudio = nullptr;
+	Audio *playAudio = nullptr;
+	Audio *gameoverAudio = nullptr;
+	Audio *carAudio = nullptr;
+	Audio *dangerAudio = nullptr;
+	Audio *deadAudio = nullptr;
 	DebugText debugText;
 
 	// ゲームシーン用
@@ -50,6 +55,39 @@ private: // メンバ変数
 	Sprite* back1 = nullptr;
 	Sprite* back2 = nullptr;
 	Sprite* back3 = nullptr;
+	Sprite *title = nullptr;
+	Sprite *noOnes0 = nullptr;
+	Sprite *noOnes1 = nullptr;
+	Sprite *noOnes2 = nullptr;
+	Sprite *noOnes3 = nullptr;
+	Sprite *noOnes4 = nullptr;
+	Sprite *noOnes5 = nullptr;
+	Sprite *noOnes6 = nullptr;
+	Sprite *noOnes7 = nullptr;
+	Sprite *noOnes8 = nullptr;
+	Sprite *noOnes9 = nullptr;
+	Sprite *noTens0 = nullptr;
+	Sprite *noTens1 = nullptr;
+	Sprite *noTens2 = nullptr;
+	Sprite *noTens3 = nullptr;
+	Sprite *noTens4 = nullptr;
+	Sprite *noTens5 = nullptr;
+	Sprite *noTens6 = nullptr;
+	Sprite *noTens7 = nullptr;
+	Sprite *noTens8 = nullptr;
+	Sprite *noTens9 = nullptr;
+	Sprite *noHundreds0 = nullptr;
+	Sprite *noHundreds1 = nullptr;
+	Sprite *noHundreds2 = nullptr;
+	Sprite *noHundreds3 = nullptr;
+	Sprite *noHundreds4 = nullptr;
+	Sprite *noHundreds5 = nullptr;
+	Sprite *noHundreds6 = nullptr;
+	Sprite *noHundreds7 = nullptr;
+	Sprite *noHundreds8 = nullptr;
+	Sprite *noHundreds9 = nullptr;
+	Sprite *uiBack = nullptr;
+	Sprite *gameOver = nullptr;
 	Sprite* warningMarkLT = nullptr;
 	Sprite* warningMarkLM = nullptr;
 	Sprite* warningMarkLB = nullptr;
@@ -78,6 +116,7 @@ private: // メンバ変数
 	Object3d* miniCarRObj[2] = { nullptr,nullptr };
 	Object3d* truckLObj[2] = { nullptr,nullptr };
 	Object3d* truckRObj[2] = { nullptr,nullptr };
+	int nowScene = 0;
 	float playerScale = 1.0f;
 	float groundScale = 15.0f;
 	float largeCarScale = 3.0f;
@@ -109,4 +148,14 @@ private: // メンバ変数
 	int blinkingL;//点滅用
 	int blinkRCount;
 	int blinkLCount;
+	int blinking[6];//点滅用
+	float nowTime = 0;
+	float endTime = 1.0;
+	float timeRate = 0;
+	int isChange = 0;
+	int walkCountOnesP = 0;
+	int walkCountTensP = 0;
+	int walkCountHundredsP = 0;
+	int soundCount = -10;
+	int soundCount2 = -10;
 };
